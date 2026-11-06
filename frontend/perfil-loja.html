@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoSync | Perfil do prestador</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autosetup-mvp-extra.css">
+    <link rel="stylesheet" href="autosync-mvp2.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">Auto<span>Sync</span></a>
+            <nav class="main-nav" aria-label="Navegação principal">
+                <a href="index.html#veiculo">Meu veículo</a>
+                <a href="index.html#setup">Customização</a>
+                <a href="index.html#manutencao">Manutenção</a>
+                <a href="oficinas.html" style="color:var(--orange)">Oficinas</a>
+                <a href="index.html#pecas">Peças</a>
+                <a href="raio-x.html">Raio-X 3D</a>
+            </nav>
+            <div class="header-actions">
+                <a class="qr-link" href="qr.html" title="Abrir no celular por QR Code">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5"/><rect x="9.5" y="1.5" width="5" height="5"/><rect x="1.5" y="9.5" width="5" height="5"/><path d="M9.5 9.5h2v2h-2zM13 13h1.5M11.5 14.5V13"/></svg>
+                    QR Code
+                </a>
+                <a class="secondary-button" href="index.html" id="linkVoltarPainel" style="padding:6px 12px;text-decoration:none">Painel</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="perfil-page">
+        <a href="oficinas.html" class="perfil-voltar">&larr; Todas as oficinas</a>
+        <div id="conteudoPerfil"><p class="vazio">Carregando perfil…</p></div>
+    </main>
+
+    <script src="js/util.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/Auth.js"></script>
+    <script src="js/perfil-loja.js"></script>
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AutoSync | Painel do Prestador</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autosetup-mvp-extra.css">
+    <link rel="stylesheet" href="autosync-mvp2.css">
+
+    <style>
+        /* Estilos específicos desta página — página nova, sem
+           classes correspondentes no style.css original. */
+
+        .painel-container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .painel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .painel-logout {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #ccc;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .painel-card {
+            background-color: #171a21;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .painel-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .painel-stat-box {
+            flex: 1;
+            background-color: #0f1115;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .painel-stat-box strong {
+            display: block;
+            font-size: 1.8em;
+            color: #f59e0b;
+        }
+
+        .painel-stat-box span {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .painel-field {
+            margin-bottom: 14px;
+        }
+
+        .painel-field label {
+            display: block;
+            font-size: 0.8em;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .painel-field input, .painel-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background-color: #0f1115;
+            color: #fff;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .painel-categorias {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .painel-categorias label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            background-color: #0f1115;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .painel-checkbox-linha {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-size: 0.9em;
+        }
+
+        .painel-submit {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background-color: #f59e0b;
+            color: #1a1a1a;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .painel-mensagem {
+            margin-top: 12px;
+            font-size: 0.85em;
+        }
+
+        .painel-mensagem.erro { color: #ef4444; }
+        .painel-mensagem.sucesso { color: #22c55e; }
+
+        .painel-fotos-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .painel-foto-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .painel-foto-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .painel-foto-remover {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75em;
+            line-height: 1;
+        }
+
+        .painel-lista-publicacoes {
+            margin-top: 20px;
+        }
+
+        .painel-publicacao-item {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 14px 0;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .painel-publicacao-item:first-child {
+            border-top: none;
+        }
+
+        .painel-publicacao-item h4 {
+            margin: 0 0 4px 0;
+        }
+
+        .painel-publicacao-item p {
+            margin: 0;
+            font-size: 0.85em;
+            color: #ccc;
+        }
+
+        .painel-publicacao-excluir {
+            background: transparent;
+            border: 1px solid rgba(239,68,68,0.4);
+            color: #ef4444;
+            border-radius: 6px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            height: fit-content;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="painel-container">
+
+        <div class="painel-header">
+            <div>
+                <div class="section-label">PAINEL DO PRESTADOR</div>
+                <h1 id="saudacao">Olá!</h1>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+                <a class="qr-link" id="linkMeuPerfil" href="oficinas.html" style="display:none">Ver meu perfil público</a>
+                <button class="painel-logout" id="botaoSair">Sair</button>
+            </div>
+        </div>
+
+        <!-- MÉTRICAS -->
+        <section class="painel-card">
+            <h2>Desempenho do seu perfil</h2>
+            <div class="painel-stats">
+                <div class="painel-stat-box">
+                    <strong id="statAcessos">—</strong>
+                    <span>Acessos ao seu perfil</span>
+                </div>
+                <div class="painel-stat-box">
+                    <strong id="statStatus">—</strong>
+                    <span>Situação do cadastro</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CADASTRO / EDIÇÃO DA LOJA -->
+        <section class="painel-card">
+            <h2>Sua loja / empreendimento</h2>
+            <p class="card-description">
+                Estas informações aparecem para os usuários quando o
+                AutoSync recomenda oficinas para uma modificação
+                compatível com o que você atende.
+            </p>
+
+            <form id="lojaForm">
+
+                <div class="painel-field">
+                    <label for="nomeLoja">Nome do empreendimento</label>
+                    <input type="text" id="nomeLoja" required>
+                </div>
+
+                <div class="painel-field">
+                    <label for="regiaoLoja">Região (Cidade/UF)</label>
+                    <input type="text" id="regiaoLoja" placeholder="Ex: São Paulo/SP" required>
+                </div>
+
+                <h3 style="margin:22px 0 4px">Profissional responsável</h3>
+                <p class="card-description" style="margin-bottom:12px">Aparece no seu perfil público. Mostrar formação e experiência dá mais confiança a quem vai escolher uma oficina.</p>
+
+                <div class="painel-linha-2">
+                    <div class="painel-field">
+                        <label for="responsavelLoja">Nome do responsável técnico</label>
+                        <input type="text" id="responsavelLoja" placeholder="Ex: Carlos Eduardo Lima">
+                    </div>
+                    <div class="painel-field">
+                        <label for="experienciaLoja">Anos de experiência</label>
+                        <input type="number" id="experienciaLoja" min="0" max="60" placeholder="Ex: 10">
+                    </div>
+                </div>
+
+                <div class="painel-field">
+                    <label for="formacaoLoja">Formação e certificações</label>
+                    <textarea id="formacaoLoja" rows="2" placeholder="Ex: Técnico em Mecânica (SENAI) · Curso de suspensão esportiva"></textarea>
+                </div>
+
+                <div class="painel-field">
+                    <label for="especialidadesLoja">Especialidades (separe por vírgula)</label>
+                    <input type="text" id="especialidadesLoja" placeholder="Ex: Rebaixamento com coilover, Alinhamento 3D">
+                </div>
+
+                <div class="painel-linha-2">
+                    <div class="painel-field">
+                        <label for="horarioLoja">Horário de atendimento</label>
+                        <input type="text" id="horarioLoja" placeholder="Ex: Seg–Sex 8h–18h">
+                    </div>
+                    <div class="painel-field">
+                        <label for="enderecoLoja">Endereço</label>
+                        <input type="text" id="enderecoLoja" placeholder="Rua, número — bairro, cidade/UF">
+                    </div>
+                </div>
+
+                <h3 style="margin:22px 0 4px">O que você oferece</h3>
+                <div class="painel-field">
+                    <label>Categorias que você atende</label>
+                    <div class="painel-categorias" id="categoriasContainer">
+                        <label><input type="checkbox" value="suspensao"> Suspensão</label>
+                        <label><input type="checkbox" value="motor"> Motor</label>
+                        <label><input type="checkbox" value="rodasPneus"> Rodas e pneus</label>
+                        <label><input type="checkbox" value="escapamento"> Escape</label>
+                        <label><input type="checkbox" value="freios"> Freios</label>
+                        <label><input type="checkbox" value="eletrica"> Elétrica</label>
+                    </div>
+                </div>
+
+                <div id="servicosContainer"></div>
+
+                <div class="painel-checkbox-linha">
+                    <input type="checkbox" id="emiteCSV">
+                    <label for="emiteCSV">Emito Certificado de Segurança Veicular (CSV)</label>
+                </div>
+
+                <div class="painel-field">
+                    <label for="contatoLoja">Contato (telefone, site ou rede social)</label>
+                    <input type="text" id="contatoLoja">
+                </div>
+
+                <div class="painel-field">
+                    <label for="observacaoLoja">Observação (aparece junto na recomendação)</label>
+                    <textarea id="observacaoLoja" rows="2"></textarea>
+                </div>
+
+                <div class="painel-field">
+                    <label for="descricaoLoja">Como você trabalha (aparece no seu perfil público)</label>
+                    <textarea id="descricaoLoja" rows="4" placeholder="Conte sobre sua experiência, diferenciais, forma de atendimento..."></textarea>
+                </div>
+
+                <div class="painel-field">
+                    <label for="inputFotos">Fotos do empreendimento</label>
+                    <input type="file" id="inputFotos" accept="image/*" multiple>
+                    <div class="painel-fotos-preview" id="fotosPreview"></div>
+                </div>
+
+                <button type="submit" class="painel-submit" id="botaoSalvarLoja">Salvar loja</button>
+
+                <p class="painel-mensagem" id="lojaMensagem"></p>
+
+            </form>
+        </section>
+
+        <!-- PUBLICAÇÕES / PORTFÓLIO -->
+        <section class="painel-card">
+            <h2>Publicações do seu perfil</h2>
+            <p class="card-description">
+                Divulgue serviços feitos, promoções e novidades. Elas
+                aparecem no seu perfil público (o que o consumidor vê
+                ao clicar na sua loja pelas recomendações).
+            </p>
+
+            <form id="publicacaoForm">
+
+                <div class="painel-linha-2">
+                    <div class="painel-field">
+                        <label for="veiculoPublicacao">Carro do cliente</label>
+                        <input type="text" id="veiculoPublicacao" list="listaCarros" placeholder="Ex: Honda Civic Touring 2023">
+                        <datalist id="listaCarros">
+                            <option value="Chevrolet Onix Turbo 2023"></option>
+                            <option value="Honda Civic Touring 2023"></option>
+                            <option value="Fiat Argo Drive 2023"></option>
+                        </datalist>
+                    </div>
+                    <div class="painel-field">
+                        <label for="categoriaPublicacao">Tipo de serviço</label>
+                        <select id="categoriaPublicacao">
+                            <option value="">Selecione…</option>
+                            <option value="suspensao">Suspensão</option>
+                            <option value="motor">Motor</option>
+                            <option value="rodasPneus">Rodas e pneus</option>
+                            <option value="escapamento">Escape</option>
+                            <option value="freios">Freios</option>
+                            <option value="eletrica">Elétrica</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="painel-field">
+                    <label for="tituloPublicacao">Título</label>
+                    <input type="text" id="tituloPublicacao" required>
+                </div>
+
+                <div class="painel-field">
+                    <label for="conteudoPublicacao">O que foi feito neste carro</label>
+                    <textarea id="conteudoPublicacao" rows="3" required></textarea>
+                </div>
+
+                <div class="painel-field">
+                    <label for="inputImagemPublicacao">Imagem (opcional)</label>
+                    <input type="file" id="inputImagemPublicacao" accept="image/*">
+                </div>
+
+                <button type="submit" class="painel-submit" id="botaoPublicar">Publicar</button>
+
+                <p class="painel-mensagem" id="publicacaoMensagem"></p>
+
+            </form>
+
+            <div id="listaPublicacoes" class="painel-lista-publicacoes"></div>
+
+        </section>
+
+    </div>
+
+    <script src="js/util.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/Auth.js"></script>
+    <script src="js/painel-prestador.js"></script>
+
+</body>
+</html>

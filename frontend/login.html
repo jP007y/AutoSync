@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AutoSync | Entrar ou Criar Conta</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autosetup-mvp-extra.css">
+
+    <style>
+        /* Estilos específicos desta página, isolados aqui para não
+           depender de classes que talvez não existam no style.css
+           original (essa página é nova, não existia no template). */
+
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-color: #0f1115;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background-color: #171a21;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .auth-logo {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 24px;
+            color: #fff;
+        }
+
+        .auth-logo span {
+            color: #f59e0b;
+        }
+
+        .auth-tabs, .auth-tipo {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .auth-tabs button, .auth-tipo button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: transparent;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .auth-tabs button.active, .auth-tipo button.active {
+            border-color: #f59e0b;
+            color: #f59e0b;
+            background: rgba(245,158,11,0.08);
+        }
+
+        .auth-field {
+            margin-bottom: 14px;
+        }
+
+        .auth-field label {
+            display: block;
+            font-size: 0.8em;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .auth-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background-color: #0f1115;
+            color: #fff;
+            font-size: 0.95em;
+            box-sizing: border-box;
+        }
+
+        .auth-submit {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #f59e0b;
+            color: #1a1a1a;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .auth-message {
+            margin-top: 14px;
+            font-size: 0.85em;
+            text-align: center;
+        }
+
+        .auth-message.erro { color: #ef4444; }
+        .auth-message.sucesso { color: #22c55e; }
+
+        .auth-hint {
+            font-size: 0.75em;
+            color: #777;
+            margin-top: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-page">
+        <div class="auth-card">
+
+            <div class="auth-logo">Auto<span>Sync</span></div>
+
+            <!-- Alterna entre "Entrar" e "Criar conta" -->
+            <div class="auth-tabs">
+                <button type="button" id="tabLogin" class="active">Entrar</button>
+                <button type="button" id="tabRegistro">Criar conta</button>
+            </div>
+
+            <!-- Só aparece no modo "Criar conta": escolha do tipo de conta -->
+            <div class="auth-tipo" id="blocoTipo" style="display:none;">
+                <button type="button" id="tipoConsumidor" class="active" data-tipo="consumidor">Sou cliente</button>
+                <button type="button" id="tipoPrestador" data-tipo="prestador">Sou prestador</button>
+            </div>
+
+            <form id="authForm">
+
+                <div class="auth-field" id="campoNome" style="display:none;">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" placeholder="Seu nome ou nome do empreendimento">
+                </div>
+
+                <div class="auth-field">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="voce@email.com" required>
+                </div>
+
+                <div class="auth-field">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+
+                <button type="submit" class="auth-submit" id="botaoEnviar">Entrar</button>
+
+            </form>
+
+            <p class="auth-message" id="mensagem"></p>
+
+            
+
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/Auth.js"></script>
+    <script>
+        // Se já existe alguém logado, não faz sentido mostrar o login
+        // de novo — redireciona direto para a página certa.
+        (function redirecionarSeJaLogado() {
+            const usuario = AutoSetupAuth.obterUsuarioLogado();
+            if (usuario) {
+                window.location.href = usuario.tipo === "prestador"
+                    ? "painel-prestador.html"
+                    : "index.html";
+            }
+        })();
+
+        let modo = "login";       // "login" | "registro"
+        let tipoSelecionado = "consumidor";
+
+        const tabLogin = document.getElementById("tabLogin");
+        const tabRegistro = document.getElementById("tabRegistro");
+        const blocoTipo = document.getElementById("blocoTipo");
+        const tipoConsumidorBtn = document.getElementById("tipoConsumidor");
+        const tipoPrestadorBtn = document.getElementById("tipoPrestador");
+        const campoNome = document.getElementById("campoNome");
+        const botaoEnviar = document.getElementById("botaoEnviar");
+        const mensagem = document.getElementById("mensagem");
+        const form = document.getElementById("authForm");
+
+        function atualizarModo() {
+            tabLogin.classList.toggle("active", modo === "login");
+            tabRegistro.classList.toggle("active", modo === "registro");
+            blocoTipo.style.display = modo === "registro" ? "flex" : "none";
+            campoNome.style.display = modo === "registro" ? "block" : "none";
+            botaoEnviar.textContent = modo === "registro" ? "Criar conta" : "Entrar";
+            mensagem.textContent = "";
+            mensagem.className = "auth-message";
+        }
+
+        tabLogin.addEventListener("click", () => { modo = "login"; atualizarModo(); });
+        tabRegistro.addEventListener("click", () => { modo = "registro"; atualizarModo(); });
+
+        tipoConsumidorBtn.addEventListener("click", () => {
+            tipoSelecionado = "consumidor";
+            tipoConsumidorBtn.classList.add("active");
+            tipoPrestadorBtn.classList.remove("active");
+        });
+
+        tipoPrestadorBtn.addEventListener("click", () => {
+            tipoSelecionado = "prestador";
+            tipoPrestadorBtn.classList.add("active");
+            tipoConsumidorBtn.classList.remove("active");
+        });
+
+        form.addEventListener("submit", async function (evento) {
+            evento.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const senha = document.getElementById("senha").value;
+            const nome = document.getElementById("nome").value.trim();
+
+            botaoEnviar.disabled = true;
+            mensagem.textContent = "";
+            mensagem.className = "auth-message";
+
+            try {
+                let usuario;
+
+                if (modo === "registro") {
+                    if (!nome) {
+                        throw new Error("Informe seu nome (ou o nome do empreendimento).");
+                    }
+                    usuario = await AutoSetupAuth.registrar({
+                        nome, email, senha, tipo: tipoSelecionado
+                    });
+                } else {
+                    usuario = await AutoSetupAuth.login({ email, senha });
+                }
+
+                mensagem.textContent = `Bem-vindo(a), ${usuario.nome}! Redirecionando...`;
+                mensagem.className = "auth-message sucesso";
+
+                setTimeout(() => {
+                    window.location.href = usuario.tipo === "prestador"
+                        ? "painel-prestador.html"
+                        : "index.html";
+                }, 600);
+
+            } catch (erro) {
+                mensagem.textContent = erro.message;
+                mensagem.className = "auth-message erro";
+                botaoEnviar.disabled = false;
+            }
+        });
+
+        atualizarModo();
+    </script>
+
+</body>
+</html>

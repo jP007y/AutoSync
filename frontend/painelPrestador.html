@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AutoSetup | Painel do Prestador</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autosetup-mvp-extra.css">
+
+    <style>
+        /* Estilos específicos desta página — página nova, sem
+           classes correspondentes no style.css original. */
+
+        .painel-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .painel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .painel-logout {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #ccc;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .painel-card {
+            background-color: #171a21;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .painel-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .painel-stat-box {
+            flex: 1;
+            background-color: #0f1115;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .painel-stat-box strong {
+            display: block;
+            font-size: 1.8em;
+            color: #f59e0b;
+        }
+
+        .painel-stat-box span {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .painel-field {
+            margin-bottom: 14px;
+        }
+
+        .painel-field label {
+            display: block;
+            font-size: 0.8em;
+            color: #999;
+            margin-bottom: 4px;
+        }
+
+        .painel-field input, .painel-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background-color: #0f1115;
+            color: #fff;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .painel-categorias {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .painel-categorias label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            background-color: #0f1115;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .painel-checkbox-linha {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-size: 0.9em;
+        }
+
+        .painel-submit {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background-color: #f59e0b;
+            color: #1a1a1a;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .painel-mensagem {
+            margin-top: 12px;
+            font-size: 0.85em;
+        }
+
+        .painel-mensagem.erro { color: #ef4444; }
+        .painel-mensagem.sucesso { color: #22c55e; }
+    </style>
+</head>
+
+<body>
+
+    <div class="painel-container">
+
+        <div class="painel-header">
+            <div>
+                <div class="section-label">PAINEL DO PRESTADOR</div>
+                <h1 id="saudacao">Olá!</h1>
+            </div>
+            <button class="painel-logout" id="botaoSair">Sair</button>
+        </div>
+
+        <!-- MÉTRICAS -->
+        <section class="painel-card">
+            <h2>Desempenho do seu perfil</h2>
+            <div class="painel-stats">
+                <div class="painel-stat-box">
+                    <strong id="statAcessos">—</strong>
+                    <span>Acessos ao seu perfil</span>
+                </div>
+                <div class="painel-stat-box">
+                    <strong id="statStatus">—</strong>
+                    <span>Situação do cadastro</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CADASTRO / EDIÇÃO DA LOJA -->
+        <section class="painel-card">
+            <h2>Sua loja / empreendimento</h2>
+            <p class="card-description">
+                Estas informações aparecem para os usuários quando o
+                AutoSetup recomenda oficinas para uma modificação
+                compatível com o que você atende.
+            </p>
+
+            <form id="lojaForm">
+
+                <div class="painel-field">
+                    <label for="nomeLoja">Nome do empreendimento</label>
+                    <input type="text" id="nomeLoja" required>
+                </div>
+
+                <div class="painel-field">
+                    <label for="regiaoLoja">Região (Cidade/UF)</label>
+                    <input type="text" id="regiaoLoja" placeholder="Ex: São Paulo/SP" required>
+                </div>
+
+                <div class="painel-field">
+                    <label>Categorias que você atende</label>
+                    <div class="painel-categorias" id="categoriasContainer">
+                        <label><input type="checkbox" value="suspensao"> Suspensão</label>
+                        <label><input type="checkbox" value="motor"> Motor</label>
+                        <label><input type="checkbox" value="rodasPneus"> Rodas e pneus</label>
+                        <label><input type="checkbox" value="escapamento"> Escape</label>
+                        <label><input type="checkbox" value="freios"> Freios</label>
+                        <label><input type="checkbox" value="eletrica"> Elétrica</label>
+                    </div>
+                </div>
+
+                <div class="painel-checkbox-linha">
+                    <input type="checkbox" id="emiteCSV">
+                    <label for="emiteCSV">Emito Certificado de Segurança Veicular (CSV)</label>
+                </div>
+
+                <div class="painel-field">
+                    <label for="contatoLoja">Contato (telefone, site ou rede social)</label>
+                    <input type="text" id="contatoLoja">
+                </div>
+
+                <div class="painel-field">
+                    <label for="observacaoLoja">Observação (aparece junto na recomendação)</label>
+                    <textarea id="observacaoLoja" rows="2"></textarea>
+                </div>
+
+                <button type="submit" class="painel-submit" id="botaoSalvarLoja">Salvar loja</button>
+
+                <p class="painel-mensagem" id="lojaMensagem"></p>
+
+            </form>
+        </section>
+
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/Auth.js"></script>
+    <script src="js/painel-prestador.js"></script>
+
+</body>
+</html>

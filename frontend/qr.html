@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoSync | Abrir no celular</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autosetup-mvp-extra.css">
+    <link rel="stylesheet" href="autosync-mvp2.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">Auto<span>Sync</span></a>
+            <div class="header-actions">
+                <a class="secondary-button" href="index.html" style="padding:6px 12px;text-decoration:none">Voltar ao painel</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="qr-page">
+        <section class="page-title">
+            <span class="eyebrow">ACESSO PELO CELULAR</span>
+            <h1>Escaneie e abra o AutoSync</h1>
+            <p>Aponte a câmera do celular para o QR Code. O site abre no navegador do aparelho, com todas as funções: simulação, oficinas, perfis e Raio-X 3D.</p>
+        </section>
+
+        <div class="qr-grid">
+
+            <div>
+                <div class="qr-box" id="qrBox">
+                    <div id="qrImagem" aria-label="QR Code"></div>
+                    <div class="qr-legenda" id="qrLegenda">AutoSync</div>
+                    <div class="qr-sub" id="qrUrl"></div>
+                </div>
+                <button class="primary-button" type="button" id="btnImprimir">Imprimir / salvar como PDF</button>
+            </div>
+
+            <div class="qr-opcoes">
+
+                <div>
+                    <label for="destino">Para onde o QR Code deve levar?</label>
+                    <select id="destino">
+                        <option value="login.html">Início (entrar ou criar conta)</option>
+                        <option value="oficinas.html">Oficinas e prestadores</option>
+                        <option value="raio-x.html">Raio-X 3D do veículo</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="endereco">Endereço do computador na rede</label>
+                    <input type="text" id="endereco" placeholder="http://192.168.0.10:8000/site/">
+                </div>
+
+                <div class="qr-aviso" id="avisoRede">Detectando o endereço do computador na rede…</div>
+
+                <div>
+                    <strong style="font-size:14px">Como usar</strong>
+                    <ol class="qr-passos">
+                        <li>Deixe o computador e o celular na <b>mesma rede Wi-Fi</b>.</li>
+                        <li>Inicie o backend com <code>--host 0.0.0.0</code> (veja o comando abaixo).</li>
+                        <li>Escaneie o QR Code com a câmera do celular e toque no link.</li>
+                        <li>Se não abrir, libere a porta <b>8000</b> no firewall do Windows (aviso que aparece ao iniciar o servidor).</li>
+                    </ol>
+                    <pre style="background:var(--surface-secondary);border:1px solid var(--border-light);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:12.5px;overflow-x:auto">cd AutoSetup_estrutura\backend
+python -m uvicorn api.main:app --host 0.0.0.0 --port 8000</pre>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="js/vendor/qrcode.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/qr.js"></script>
+</body>
+</html>

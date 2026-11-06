@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AutoSync | Raio-X 3D do veículo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="autosetup-mvp-extra.css">
+    <link rel="stylesheet" href="raio-x.css">
+</head>
+<body class="rx-page">
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">Auto<span>Sync</span></a>
+            <nav class="main-nav" aria-label="Navegação principal">
+                <a href="index.html#veiculo">Meu veículo</a>
+                <a href="index.html#setup">Customização</a>
+                <a href="index.html#manutencao">Manutenção</a>
+                <a href="index.html#oficinas">Oficinas</a>
+                <a href="index.html#pecas">Peças</a>
+                <a href="raio-x.html" aria-current="page" style="color:var(--orange)">Raio-X 3D</a>
+            </nav>
+            <button class="profile-button" type="button" aria-label="Perfil" id="profileButton" title="Sair">--</button>
+        </div>
+    </header>
+
+    <main class="rx-stage" id="rxStage">
+        <div class="rx-canvas-wrap">
+            <canvas id="rxCanvas" tabindex="0" aria-label="Modelo 3D de carro em corte"></canvas>
+            <div class="rx-error" id="rxError">
+                <div>
+                    <strong style="color:var(--text)">Não foi possível iniciar a visualização 3D.</strong>
+                    <p style="margin-top:8px">Seu navegador ou dispositivo parece não ter suporte a WebGL.</p>
+                    <a class="secondary-button" href="index.html" style="display:inline-block;margin-top:16px;text-decoration:none">Voltar ao painel</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="rx-ui">
+            <header class="rx-head rx-fade">
+                <span class="eyebrow">VISUALIZAÇÃO 3D</span>
+                <h1>Raio-X do veículo</h1>
+                <p>Modelo ilustrativo &nbsp;·&nbsp; Entre-eixos <b>2.700 mm</b> &nbsp;·&nbsp; Motor <b>4 cil. em linha</b> &nbsp;·&nbsp; Tração <b>traseira</b></p>
+            </header>
+
+            <nav class="rx-panel rx-parts rx-fade" id="rxParts" aria-label="Sistemas do veículo"></nav>
+            <section class="rx-panel rx-info rx-fade" id="rxInfo" aria-live="polite"></section>
+
+            <div class="rx-bar" role="toolbar" aria-label="Controles do modelo">
+                <div class="rx-seg" role="group" aria-label="Carroceria">
+                    <button class="rx-btn" data-mode="xray" aria-pressed="true">Raio-X</button>
+                    <button class="rx-btn" data-mode="corte" aria-pressed="false">Corte</button>
+                    <button class="rx-btn" data-mode="solid" aria-pressed="false">Carroceria</button>
+                </div>
+                <span class="rx-sep"></span>
+                <button class="rx-btn" id="rxDoors" aria-pressed="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 14V4l5-2v12M8 4h5v10H3"/></svg>Portas</button>
+                <button class="rx-btn" id="rxExplode" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1v4M8 11v4M1 8h4M11 8h4M6 6l-2-2M10 6l2-2M6 10l-2 2M10 10l2 2"/></svg>Explodir</button>
+                <button class="rx-btn" id="rxSpin" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 8A5.5 5.5 0 1 1 11 3.4M11 1v3h3"/></svg>Girar</button>
+                <button class="rx-btn" id="rxHome"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="3"/><path d="M8 1v3M8 12v3M1 8h3M12 8h3"/></svg><span class="rx-lbl-long">Recentrar</span></button>
+                <button class="rx-btn" id="rxClean" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/></svg><span class="rx-lbl-long">Tela limpa</span></button>
+                <span class="rx-sep"></span>
+                <div class="rx-sws" role="group" aria-label="Cor da pintura">
+                    <button class="rx-sw" data-paint="#1f4e6b" aria-label="Azul petróleo" aria-pressed="true" style="background:#1f4e6b"></button>
+                    <button class="rx-sw" data-paint="#9aa4ad" aria-label="Prata" aria-pressed="false" style="background:#9aa4ad"></button>
+                    <button class="rx-sw" data-paint="#a3222b" aria-label="Vermelho" aria-pressed="false" style="background:#a3222b"></button>
+                    <button class="rx-sw" data-paint="#e4e7ea" aria-label="Branco" aria-pressed="false" style="background:#e4e7ea"></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="rxPin" hidden><div class="stem"></div><div class="dot"></div><div class="tag" id="rxPinTag"></div></div>
+    <div id="rxTip" hidden></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/Auth.js"></script>
+    <script src="js/raio-x-3d.js"></script>
+    <script src="js/raio-x.js"></script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+/* ============================================================
+   AUTOSYNC — ESTILOS DA 2ª FASE DO MVP
+   (escolha de veículo, formulário de modificação, diretório de
+   oficinas, perfil do prestador e QR Code). Usa as variáveis do
+   style.css; carregar DEPOIS dele.
+   ============================================================ */
+
+/* ---------- Capa do veículo (foto do carro selecionado) ---------- */
+.vehicle-image { padding: 0; overflow: hidden; background: var(--surface-secondary); position: relative; align-items: stretch; }
+.vehicle-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vehicle-image .vehicle-image-label {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 14px 10px;
+    background: linear-gradient(transparent, rgba(0,0,0,.75)); font-size: 13px; font-weight: 700;
+}
+.vehicle-resumo { color: var(--text-secondary); font-size: 13px; line-height: 1.55; margin: -8px 0 16px; max-width: 70ch; }
+
+/* ---------- Modais ---------- */
+.modal-content.modal-wide { max-width: 860px; max-height: 92vh; overflow-y: auto; }
+.vehicle-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+.vehicle-option {
+    background: var(--surface-secondary); border: 2px solid var(--border-light); border-radius: 12px;
+    overflow: hidden; padding: 0; color: var(--text); text-align: left; display: flex; flex-direction: column;
+    transition: border-color .2s, transform .2s;
+}
+.vehicle-option:hover, .vehicle-option:focus-visible { border-color: var(--orange); transform: translateY(-2px); outline: none; }
+.vehicle-option.is-selected { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange); }
+.vehicle-option img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.vehicle-option-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.vehicle-option-body strong { font-size: 16px; }
+.vehicle-option-body .meta { color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.vehicle-option-body p { color: var(--text-secondary); font-size: 12.5px; line-height: 1.55; }
+.vehicle-option-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.vehicle-option-chips span { font-size: 11px; border: 1px solid var(--border-light); border-radius: 999px; padding: 2px 9px; color: var(--text); }
+
+/* ---------- Formulário de parâmetros da modificação ---------- */
+.param-field { margin-top: 20px; }
+.param-field > label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.param-help { color: var(--text-secondary); font-size: 12.5px; line-height: 1.55; margin-bottom: 10px; }
+.param-ref {
+    display: inline-block; background: var(--surface-secondary); border: 1px solid var(--border-light);
+    border-radius: 6px; padding: 3px 10px; font-size: 12px; margin-bottom: 10px;
+}
+.param-ref b { color: var(--orange); }
+.param-input-row { display: flex; align-items: center; gap: 10px; }
+.param-input-row input {
+    width: 150px; background: var(--background); color: var(--text); border: 1px solid var(--border-light);
+    border-radius: 8px; padding: 10px 12px; font-size: 18px; font-weight: 700;
+}
+.param-input-row input:focus { outline: 2px solid var(--orange); border-color: transparent; }
+.param-unit { color: var(--text-secondary); font-size: 14px; }
+.param-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.param-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.param-presets button {
+    background: transparent; border: 1px solid var(--border-light); color: var(--text);
+    border-radius: 999px; padding: 5px 12px; font-size: 12px;
+}
+.param-presets button:hover { border-color: var(--orange); color: var(--orange); }
+.param-resumo { margin-top: 18px; border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; border: 1px solid var(--border-light); background: var(--surface-secondary); }
+.param-resumo.tom-ok { border-color: rgba(63,185,80,.5); background: rgba(63,185,80,.08); }
+.param-resumo.tom-atencao { border-color: rgba(245,158,11,.5); background: rgba(245,158,11,.1); }
+.param-resumo.tom-erro { border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.1); }
+.param-actions { display: flex; gap: 10px; margin-top: 18px; }
+.param-actions .primary-button { margin-top: 0; }
+.param-actions .secondary-button { white-space: nowrap; }
+
+/* ---------- Diretório de oficinas ---------- */
+.dir-page { width: 92%; max-width: 1400px; margin: 0 auto; padding-bottom: 60px; }
+.dir-filtros { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 4px 0 22px; }
+.dir-filtros input[type="search"] {
+    background: var(--surface); color: var(--text); border: 1px solid var(--border-light); border-radius: 8px;
+    padding: 9px 12px; min-width: 240px; font-size: 14px;
+}
+.chip-filtro {
+    background: var(--surface); border: 1px solid var(--border-light); color: var(--text);
+    border-radius: 999px; padding: 6px 13px; font-size: 12.5px;
+}
+.chip-filtro[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #111; font-weight: 700; }
+.dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.dir-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column;
+    transition: border-color .2s, transform .2s;
+}
+.dir-card:hover, .dir-card:focus-visible { border-color: var(--orange); transform: translateY(-2px); outline: none; }
+.dir-card-thumb { aspect-ratio: 16 / 9; background: var(--surface-secondary); overflow: hidden; }
+.dir-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dir-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.dir-card-body h3 { font-size: 17px; }
+.dir-regiao { color: var(--text-secondary); font-size: 13px; }
+.dir-pessoa { font-size: 12.5px; color: var(--text); }
+.dir-pessoa span { color: var(--text-secondary); }
+.dir-ver { margin-top: auto; padding-top: 6px; color: var(--orange); font-size: 13px; font-weight: 700; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { font-size: 11.5px; border-radius: 999px; padding: 3px 10px; border: 1px solid rgba(255,138,0,.4); color: var(--orange); background: rgba(255,138,0,.1); }
+.badge.csv { border-color: rgba(63,185,80,.45); color: var(--green); background: rgba(63,185,80,.1); }
+.badge.neutro { border-color: var(--border-light); color: var(--text-secondary); background: transparent; }
+.dir-vazio { color: var(--text-secondary); padding: 30px 0; }
+
+/* ---------- Perfil do prestador ---------- */
+.perfil-page { width: 92%; max-width: 980px; margin: 0 auto; padding: 24px 0 70px; }
+.perfil-voltar { display: inline-block; color: var(--orange); text-decoration: none; font-size: 14px; margin-bottom: 16px; }
+.perfil-hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.perfil-hero h1 { font-size: 30px; line-height: 1.15; }
+.perfil-hero .dir-regiao { margin: 4px 0 14px; font-size: 15px; }
+.perfil-contato-linha { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 16px; font-size: 14px; }
+.perfil-contato-linha a { color: var(--text); text-decoration: none; }
+.perfil-contato-linha a:hover { color: var(--orange); }
+.perfil-obs { color: var(--text-secondary); font-size: 13px; margin-top: 12px; }
+.perfil-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-top: 20px; }
+.perfil-card h2 { font-size: 18px; margin-bottom: 14px; }
+.perfil-card p.texto { color: #cfd6dc; font-size: 14px; line-height: 1.65; white-space: pre-line; }
+.perfil-prof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; }
+.perfil-prof dt { color: var(--text-secondary); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.perfil-prof dd { font-size: 14px; line-height: 1.5; }
+.servico-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.servico-card { background: var(--surface-secondary); border: 1px solid var(--border-light); border-radius: 10px; padding: 16px; }
+.servico-card h3 { font-size: 15px; color: var(--orange); margin-bottom: 8px; }
+.servico-card p { font-size: 13px; color: #cfd6dc; line-height: 1.55; }
+.servico-card .linha { margin-top: 10px; font-size: 12.5px; color: var(--text-secondary); }
+.servico-card .linha b { color: var(--text); font-weight: 600; }
+.pub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+.pub-card { background: var(--surface-secondary); border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.pub-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.pub-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+.pub-body h3 { font-size: 15.5px; line-height: 1.3; }
+.pub-body p { font-size: 13px; color: #cfd6dc; line-height: 1.55; }
+.pub-data { font-size: 11.5px; color: var(--text-secondary); }
+.perfil-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.perfil-galeria img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light); }
+.vazio { color: var(--text-secondary); font-size: 14px; }
+
+/* ---------- QR Code ---------- */
+.qr-page { width: 92%; max-width: 1000px; margin: 0 auto; padding: 24px 0 70px; }
+.qr-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 8px; }
+.qr-box { background: #fff; border-radius: 16px; padding: 22px; text-align: center; color: #111; }
+.qr-box canvas, .qr-box img, .qr-box svg { width: 100%; height: auto; display: block; }
+.qr-box .qr-legenda { margin-top: 12px; font-weight: 700; font-size: 15px; }
+.qr-box .qr-sub { font-size: 12px; color: #555; word-break: break-all; margin-top: 4px; }
+.qr-opcoes { display: grid; gap: 14px; }
+.qr-opcoes label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; }
+.qr-opcoes select, .qr-opcoes input[type="text"] {
+    width: 100%; background: var(--surface-secondary); color: var(--text); border: 1px solid var(--border-light);
+    border-radius: 8px; padding: 10px 12px; font-size: 14px;
+}
+.qr-aviso { border: 1px solid rgba(245,158,11,.45); background: rgba(245,158,11,.08); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; }
+.qr-passos { margin-left: 18px; font-size: 13.5px; line-height: 1.8; color: #cfd6dc; }
+
+/* ---------- Painel do prestador (campos novos) ---------- */
+.painel-servico { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 14px; margin-top: 12px; }
+.painel-servico h3 { font-size: 14px; color: var(--orange); margin-bottom: 8px; }
+.painel-linha-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ---------- Navegação: ícone de QR e botão "ver todas" ---------- */
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.qr-link {
+    display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); text-decoration: none;
+    font-size: 13px; border: 1px solid var(--border-light); border-radius: 8px; padding: 6px 10px;
+}
+.qr-link:hover { color: var(--orange); border-color: var(--orange); }
+.qr-link svg { width: 16px; height: 16px; }
+.workshop-all-link { display: block; margin-top: 14px; text-align: center; text-decoration: none; }
+
+@media (max-width: 900px) {
+    .vehicle-options { grid-template-columns: 1fr; }
+    .qr-grid { grid-template-columns: 1fr; }
+    .perfil-prof { grid-template-columns: 1fr; }
+    .param-grid { grid-template-columns: 1fr; }
+    .main-nav { display: none; }
+}
+@media (max-width: 800px) {
+    .vehicle-card { grid-template-columns: 1fr !important; }
+    .vehicle-image { height: 190px; }
+    .vehicle-specs { grid-template-columns: repeat(2, max-content) !important; }
+    .vehicle-card .secondary-button { grid-column: 1 !important; justify-self: stretch !important; }
+}
+@media print {
+    body * { visibility: hidden; }
+    .qr-box, .qr-box * { visibility: visible; }
+    .qr-box { position: absolute; left: 0; top: 0; width: 100%; }
+}

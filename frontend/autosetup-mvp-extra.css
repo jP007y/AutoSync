@@ -1,0 +1,89 @@
+/* ============================================================
+   AUTOSETUP — ESTILOS COMPLEMENTARES (MVP)
+   ============================================================
+
+   O style.css original só tinha o estado "verde" para as caixas
+   de status (status-box-green) e os estados "compatible" /
+   "warning" para o selo de status das modificações.
+
+   Agora que o resultado é calculado dinamicamente, ele também
+   pode cair em estado de ATENÇÃO (laranja) ou CRÍTICO/IRREGULAR
+   (vermelho). Estas classes abaixo cobrem esses casos.
+
+   COMO USAR:
+   Copie as regras abaixo para dentro do seu style.css (ou
+   mantenha este arquivo e inclua-o depois do style.css no
+   index.html). Os valores de cor (--danger, --warning) devem
+   ser ajustados para combinar com a paleta já usada no restante
+   do site.
+   ============================================================ */
+
+.status-box-orange {
+    background-color: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.status-box-orange .status-box-icon {
+    background-color: #f59e0b;
+    color: #1a1a1a;
+}
+
+.status-box-red {
+    background-color: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.status-box-red .status-box-icon {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.status-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+/* ------------------------------------------------------------
+   Lista de oficinas recomendadas (preenchida via API /lojas)
+   ------------------------------------------------------------ */
+
+.workshop-item {
+    display: block;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    color: inherit;
+}
+
+.workshop-item:hover {
+    opacity: 0.85;
+}
+
+.workshop-item:first-child {
+    border-top: none;
+}
+
+.workshop-item strong {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.workshop-item p {
+    margin: 2px 0;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.workshop-obs {
+    font-style: italic;
+}
+
+.workshop-contato {
+    color: #f59e0b;
+}
+
+.workshop-ver-perfil {
+    color: #f59e0b;
+    font-weight: bold;
+    margin-top: 6px;
+}
