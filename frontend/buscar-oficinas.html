@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buscar oficinas | AutoSync</title>
+  <link rel="stylesheet" href="buscar-oficinas.css">
+</head>
+<body>
+  <header class="bo-topo">
+    <a href="index.html" class="bo-voltar">&larr; Voltar</a>
+    <h1>Buscar oficinas</h1>
+    <p>Encontre serviços de manutenção, reparos estéticos, vistoria, tuning e mais.</p>
+  </header>
+
+  <main class="bo-main">
+    <section class="bo-filtros" aria-label="Filtros de busca">
+      <input id="bo-texto" type="search" placeholder="Buscar por nome, serviço ou bairro...">
+
+      <div class="bo-linha">
+        <label>Cidade
+          <select id="bo-cidade"><option value="">Todas</option></select>
+        </label>
+        <label>Ordenar por
+          <select id="bo-ordem">
+            <option value="nota">Melhor avaliação</option>
+            <option value="nome">Nome (A-Z)</option>
+          </select>
+        </label>
+        <label class="bo-check"><input id="bo-aberto" type="checkbox"> Somente abertas agora</label>
+      </div>
+
+      <div id="bo-categorias" class="bo-chips" role="group" aria-label="Categorias"></div>
+      <button id="bo-limpar" type="button" class="bo-limpar">Limpar filtros</button>
+    </section>
+
+    <p id="bo-contagem" class="bo-contagem" aria-live="polite"></p>
+    <section id="bo-resultados" class="bo-grid"></section>
+  </main>
+
+  <script src="js/buscar-oficinas.js"></script>
+</body>
+</html>
