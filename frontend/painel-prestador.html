@@ -215,6 +215,11 @@
             font-size: 1.4em;
         }
 
+        /* Sem valor (traço) quando a API falha: cinza, não amarelo */
+        .painel-stat-box strong.is-vazio {
+            color: var(--text-secondary);
+        }
+
         .painel-logout:hover {
             border-color: var(--brand);
             color: var(--brand);

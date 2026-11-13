@@ -34,8 +34,10 @@ if (usuario) {
             document.getElementById("statStatus").textContent =
                 stats.lojaCadastrada ? "Ativo" : "Sem loja cadastrada";
             document.getElementById("statStatus").classList.remove("is-erro"); // só estilo
+            document.getElementById("statAcessos").classList.remove("is-vazio"); // só estilo
         } catch (erro) {
             document.getElementById("statAcessos").textContent = "—";
+            document.getElementById("statAcessos").classList.add("is-vazio"); // só estilo: traço em cinza
             document.getElementById("statStatus").textContent = "Erro ao carregar";
             document.getElementById("statStatus").classList.add("is-erro"); // só estilo: mostra em vermelho
             console.error("Falha ao carregar estatísticas:", erro.message);
