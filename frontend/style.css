@@ -192,11 +192,19 @@ textarea:disabled,
     color: var(--brand);
 }
 
-/* Logo em imagem (para quando frontend/img/logo-autosync.png existir) */
+/* Logo em imagem (img/logo-autosync-escura.png, versão para fundo escuro).
+   A versão para fundo claro é img/logo-autosync.png. */
+.logo:has(.logo-img) {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+}
+
 .logo-img {
     display: block;
     height: 40px;
     width: auto;
+    max-width: 100%;
 }
 
 .main-nav a[aria-current="page"] {
