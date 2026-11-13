@@ -19,8 +19,8 @@ html {
 }
 
 body {
-    background: #0d1117;
-    color: #e6edf3;
+    background: var(--bg);
+    color: var(--text);
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.5;
 }
@@ -41,27 +41,112 @@ a {
 
 
 /* ============================================================
-   VARIÁVEIS
+   VARIÁVEIS — PALETA AUTOSYNC (modo escuro)
+   Única fonte das cores do frontend. Os demais CSS usam
+   apenas estas variáveis.
    ============================================================ */
 
 :root {
+    color-scheme: dark;
 
-    --background: #0d1117;
-    --surface: #161d26;
-    --surface-secondary: #111820;
-    --border: #252d36;
-    --border-light: #2a333d;
+    /* Fundos e superfícies */
+    --bg: #121315;
+    --surface: #1B1C1F;
+    --surface-2: #25262A;
+    --border: #34353A;
+    --border-strong: #46474D;
 
-    --text: #e6edf3;
-    --text-secondary: #8b949e;
+    /* Texto */
+    --text: #F2F1EE;
+    --text-secondary: #9A9893;
 
-    --orange: #ff8a00;
-    --orange-light: #ff9d2e;
+    /* Marca */
+    --brand: #F5B301;
+    --brand-hover: #FFC933;
+    --brand-2: #E8913A;
+    --icon-gray: #8C8A85;
+    --on-brand: #14120F;
+    --brand-soft: rgba(245, 179, 1, .12);
+    --brand-line: rgba(245, 179, 1, .40);
 
-    --green: #3fb950;
-    --yellow: #d29922;
+    /* Semânticas (distintas do amarelo da marca) */
+    --success: #3FB950;
+    --success-soft: rgba(63, 185, 80, .12);
+    --success-line: rgba(63, 185, 80, .40);
+    --warning: #D4A15A;
+    --warning-soft: rgba(212, 161, 90, .12);
+    --warning-line: rgba(212, 161, 90, .40);
+    --danger: #EF4444;
+    --danger-soft: rgba(239, 68, 68, .12);
+    --danger-line: rgba(239, 68, 68, .40);
+
+    /* Estados */
+    --focus-ring: 0 0 0 3px rgba(245, 179, 1, .45);
+    --disabled-opacity: .45;
+    --overlay: rgba(0, 0, 0, .72);
+    --glass: rgba(27, 28, 31, .90);
+    --glass-strong: rgba(27, 28, 31, .94);
+    --glass-bg: rgba(18, 19, 21, .85);
+    --hairline: rgba(242, 241, 238, .18);
 
     --radius: 12px;
+
+    /* Apelidos dos nomes antigos (mantidos para não quebrar
+       estilos inline e CSS existentes) */
+    --background: var(--bg);
+    --surface-secondary: var(--surface-2);
+    --border-light: var(--border);
+    --orange: var(--brand);
+    --orange-light: var(--brand-hover);
+    --green: var(--success);
+    --yellow: var(--warning);
+}
+
+
+/* ============================================================
+   ESTADOS GLOBAIS (foco, desabilitado, links)
+   ============================================================ */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--brand);
+    box-shadow: var(--focus-ring);
+    outline: none;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+    opacity: var(--disabled-opacity);
+    cursor: not-allowed;
+}
+
+::selection {
+    background: var(--brand);
+    color: var(--on-brand);
+}
+
+/* Ícones SVG em dois tons: o traço usa currentColor (amarelo)
+   e elementos com .icon-sec usam o cinza. */
+.icon-duo {
+    color: var(--brand);
+}
+
+.icon-duo .icon-sec {
+    stroke: var(--icon-gray);
 }
 
 
@@ -72,7 +157,7 @@ a {
 .site-header {
     height: 70px;
 
-    background: #111820;
+    background: var(--surface);
 
     border-bottom: 1px solid var(--border);
 
@@ -100,11 +185,22 @@ a {
 
     text-decoration: none;
 
-    color: var(--orange);
+    color: var(--text);
 }
 
 .logo span {
-    color: white;
+    color: var(--brand);
+}
+
+/* Logo em imagem (para quando frontend/img/logo-autosync.png existir) */
+.logo-img {
+    display: block;
+    height: 40px;
+    width: auto;
+}
+
+.main-nav a[aria-current="page"] {
+    color: var(--brand);
 }
 
 .main-nav {
@@ -133,7 +229,7 @@ a {
     border: none;
     border-radius: 50%;
 
-    background: #252d36;
+    background: var(--surface-2);
     color: var(--text);
 
     font-weight: bold;
@@ -333,7 +429,7 @@ a {
     border: none;
 
     background: var(--orange);
-    color: #111;
+    color: var(--on-brand);
 }
 
 .primary-button:hover {
@@ -350,7 +446,14 @@ a {
 
 .secondary-button:hover {
     background: var(--orange);
-    color: #111;
+    color: var(--on-brand);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+    background: var(--surface-2);
+    border-color: var(--border);
+    color: var(--text-secondary);
 }
 
 .full-button {
@@ -421,7 +524,7 @@ a {
 
     border-radius: 8px;
 
-    background: #252d36;
+    background: var(--surface-2);
 
     display: flex;
     justify-content: center;
@@ -459,12 +562,12 @@ a {
 }
 
 .status-compatible {
-    background: rgba(63, 185, 80, .15);
+    background: var(--success-soft);
     color: var(--green);
 }
 
 .status-warning {
-    background: rgba(210, 153, 34, .15);
+    background: var(--warning-soft);
     color: var(--yellow);
 }
 
@@ -504,7 +607,7 @@ a {
 
     border-radius: 50%;
 
-    background: #252d36;
+    background: var(--surface-2);
 
     display: flex;
     justify-content: center;
@@ -712,7 +815,7 @@ a {
 .progress {
     height: 5px;
 
-    background: #252d36;
+    background: var(--surface-2);
 
     border-radius: 20px;
 
@@ -745,17 +848,17 @@ a {
 }
 
 .status-box-green {
-    background: rgba(63, 185, 80, .08);
+    background: var(--success-soft);
 
-    border: 1px solid rgba(63, 185, 80, .25);
+    border: 1px solid var(--success-line);
 }
 
 /* Usada quando risco/legalidade vêm como "atenção" ou "irregular"
    na resposta da IA (ver renderizarStatusBox em app.js) */
 .status-box-yellow {
-    background: rgba(210, 153, 34, .08);
+    background: var(--warning-soft);
 
-    border: 1px solid rgba(210, 153, 34, .25);
+    border: 1px solid var(--warning-line);
 }
 
 .status-box-yellow .status-box-icon {
@@ -772,7 +875,7 @@ a {
 
     background: var(--green);
 
-    color: #111;
+    color: var(--on-brand);
 
     display: flex;
     justify-content: center;
@@ -872,7 +975,7 @@ a {
 .product-image {
     height: 110px;
 
-    background: #252d36;
+    background: var(--surface-2);
 
     display: flex;
     justify-content: center;
@@ -919,7 +1022,7 @@ a {
 
     z-index: 200;
 
-    background: rgba(0, 0, 0, .7);
+    background: var(--overlay);
 
     display: none;
 
@@ -973,7 +1076,7 @@ a {
 
     border-radius: 50%;
 
-    background: #252d36;
+    background: var(--surface-2);
 
     color: var(--text);
 
