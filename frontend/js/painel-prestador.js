@@ -298,7 +298,7 @@ if (usuario) {
             item.innerHTML = `
                 <div>
                     <h4>${esc(post.titulo)}</h4>
-                    <p style="color:#8b949e;font-size:12px;margin-bottom:4px">${post.veiculo ? "🚗 " + esc(post.veiculo) : ""}${post.categoria ? " · " + esc(AutoSyncUtil.categoriaLabel(post.categoria)) : ""}</p>
+                    <p style="color:var(--text-secondary);font-size:12px;margin-bottom:4px">${post.veiculo ? "🚗 " + esc(post.veiculo) : ""}${post.categoria ? " · " + esc(AutoSyncUtil.categoriaLabel(post.categoria)) : ""}</p>
                     <p>${esc(post.conteudo)}</p>
                 </div>
                 <button type="button" class="painel-publicacao-excluir" data-id="${post.id}">Excluir</button>

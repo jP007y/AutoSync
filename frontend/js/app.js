@@ -158,7 +158,7 @@ function mostrarErroDeCarregamento(mensagem) {
         aviso = document.createElement("p");
         aviso.id = "vehicleLoadError";
         aviso.className = "card-description";
-        aviso.style.color = "#ef4444";
+        aviso.style.color = "var(--danger)";
         secaoVeiculo.appendChild(aviso);
     }
     aviso.textContent = mensagem;
