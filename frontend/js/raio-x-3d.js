@@ -34,7 +34,7 @@ function create(canvas, opts){
   const preview = !!opts.preview;
   const THREE = window.THREE, V3 = THREE.Vector3;
   const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const BG = 0x0d1117, ACCENT = 0xff8a00;
+  const BG = 0x121315, ACCENT = 0xF5B301;
 
   let renderer;
   try { renderer = new THREE.WebGLRenderer({canvas, antialias:true}); }
@@ -72,12 +72,12 @@ function create(canvas, opts){
   Object.assign(key.shadow.camera, {left:-5, right:5, top:5, bottom:-5, near:1, far:25});
   key.shadow.bias = -0.0004; key.shadow.normalBias = 0.02;
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x9cc4ff, 0.9); rim.position.set(-6, 3, -4); scene.add(rim);
+  const rim = new THREE.DirectionalLight(0xfff0cc, 0.9); rim.position.set(-6, 3, -4); scene.add(rim);
   const fill = new THREE.DirectionalLight(0xffe6c8, 0.45); fill.position.set(-3, 2, 6); scene.add(fill);
 
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 80), new THREE.MeshStandardMaterial({color:0x05070a, roughness:1, metalness:0}));
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 80), new THREE.MeshStandardMaterial({color:0x0b0c0d, roughness:1, metalness:0}));
   floor.rotation.x = -PI/2; floor.position.y = -0.005; floor.receiveShadow = true; scene.add(floor);
-  const grid = new THREE.PolarGridHelper(6.5, 24, 10, 96, 0x3a4552, 0x252d36);
+  const grid = new THREE.PolarGridHelper(6.5, 24, 10, 96, 0x34353A, 0x25262A);
   grid.material.transparent = true; grid.material.opacity = .55; grid.position.y = 0.001; scene.add(grid);
 
 /* ---------- Helpers ---------- */
@@ -122,11 +122,11 @@ function put(g, obj, ex){
 /* ---------- Carroceria ---------- */
 const bodyGroup = new THREE.Group(); scene.add(bodyGroup);
 const clipPlane = new THREE.Plane(new V3(0,0,-1), 0);
-const paintMat = new THREE.MeshPhysicalMaterial({color:0x1f4e6b, metalness:.55, roughness:.3, clearcoat:1, clearcoatRoughness:.08, side:THREE.DoubleSide, transparent:true, opacity:.16, depthWrite:false});
+const paintMat = new THREE.MeshPhysicalMaterial({color:0x4a4b50, metalness:.55, roughness:.3, clearcoat:1, clearcoatRoughness:.08, side:THREE.DoubleSide, transparent:true, opacity:.16, depthWrite:false});
 const doorMat  = paintMat.clone(); doorMat.opacity = .38;
-const glassMat = new THREE.MeshPhysicalMaterial({color:0x0e1822, metalness:.9, roughness:.05, transparent:true, opacity:.22, side:THREE.DoubleSide, depthWrite:false});
+const glassMat = new THREE.MeshPhysicalMaterial({color:0x15171a, metalness:.9, roughness:.05, transparent:true, opacity:.22, side:THREE.DoubleSide, depthWrite:false});
 const trimMat  = M(0x26292e,.1,.85,{transparent:true, opacity:.5, depthWrite:false});
-const edgeMat  = new THREE.LineBasicMaterial({color:0xbfd6e6, transparent:true, opacity:.55});
+const edgeMat  = new THREE.LineBasicMaterial({color:0xd8d6d0, transparent:true, opacity:.55});
 
 const frontDoor = [[0.02,0.4],[0.85,0.4],[0.85,0.9],[0.2,1.28],[0.02,1.32]];
 const frontWin  = [[0.08,0.95],[0.68,0.95],[0.22,1.22],[0.08,1.25]];
