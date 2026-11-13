@@ -1,30 +1,39 @@
+/* AUTOSYNC — BUSCAR OFICINAS. Usa as variáveis do style.css; carregar depois dele. */
 * { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, Arial, sans-serif; background: #f4f6f8; color: #1d2733; }
-.bo-topo { background: #14213d; color: #fff; padding: 20px 16px; text-align: center; }
+body { margin: 0; font-family: system-ui, Arial, sans-serif; background: var(--bg); color: var(--text); }
+.bo-topo { background: var(--surface); border-bottom: 1px solid var(--border); color: var(--text); padding: 20px 16px; text-align: center; }
 .bo-topo h1 { margin: 8px 0 4px; font-size: 1.6rem; }
-.bo-topo p { margin: 0; opacity: .85; }
-.bo-voltar { color: #fca311; text-decoration: none; font-size: .9rem; }
+.bo-topo p { margin: 0; color: var(--text-secondary); }
+.bo-voltar { color: var(--brand); text-decoration: none; font-size: .9rem; }
+.bo-voltar:hover { color: var(--brand-hover); text-decoration: underline; }
 .bo-main { max-width: 1000px; margin: 0 auto; padding: 16px; }
-.bo-filtros { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-#bo-texto { width: 100%; padding: 12px; border: 1px solid #c9d1d9; border-radius: 8px; font-size: 1rem; }
+.bo-filtros { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+#bo-texto { width: 100%; padding: 12px; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+#bo-texto::placeholder { color: var(--text-secondary); }
 .bo-linha { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0; align-items: end; }
-.bo-linha label { display: flex; flex-direction: column; font-size: .85rem; gap: 4px; }
-.bo-linha select { padding: 8px; border: 1px solid #c9d1d9; border-radius: 8px; }
-.bo-check { flex-direction: row !important; align-items: center; gap: 6px !important; }
+.bo-linha label { display: flex; flex-direction: column; font-size: .85rem; gap: 4px; color: var(--text-secondary); }
+.bo-linha select { padding: 8px; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; }
+.bo-check { flex-direction: row !important; align-items: center; gap: 6px !important; color: var(--text) !important; }
+.bo-check input { accent-color: var(--brand); }
 .bo-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.bo-chip { border: 1px solid #14213d; background: #fff; color: #14213d; padding: 6px 12px; border-radius: 999px; cursor: pointer; font-size: .85rem; }
-.bo-chip.ativo { background: #14213d; color: #fff; }
-.bo-limpar { margin-top: 12px; background: none; border: none; color: #c1121f; cursor: pointer; text-decoration: underline; }
-.bo-contagem { margin: 16px 0 8px; color: #55606e; }
+.bo-chip { border: 1px solid var(--border); background: var(--surface-2); color: var(--text); padding: 6px 12px; border-radius: 999px; cursor: pointer; font-size: .85rem; transition: border-color .2s, color .2s; }
+.bo-chip:hover { border-color: var(--brand); color: var(--brand); }
+.bo-chip.ativo { background: var(--brand); border-color: var(--brand); color: var(--on-brand); font-weight: 700; }
+.bo-limpar { margin-top: 12px; background: none; border: none; color: var(--brand-2); cursor: pointer; text-decoration: underline; }
+.bo-limpar:hover { color: var(--brand-hover); }
+.bo-contagem { margin: 16px 0 8px; color: var(--text-secondary); }
 .bo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.bo-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.bo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: border-color .2s; }
+.bo-card:hover { border-color: var(--border-strong); }
 .bo-card h3 { margin: 0 0 4px; }
-.bo-card .bo-local { color: #55606e; font-size: .85rem; margin: 0 0 8px; }
+.bo-card .bo-local { color: var(--text-secondary); font-size: .85rem; margin: 0 0 8px; }
 .bo-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-.bo-tag { background: #e8eef7; color: #14213d; font-size: .75rem; padding: 3px 8px; border-radius: 6px; }
-.bo-servicos { font-size: .85rem; margin: 8px 0; padding-left: 18px; }
+.bo-tag { background: var(--brand-soft); border: 1px solid var(--brand-line); color: var(--brand); font-size: .75rem; padding: 3px 8px; border-radius: 6px; }
+.bo-servicos { font-size: .85rem; margin: 8px 0; padding-left: 18px; color: var(--text); }
+.bo-servicos li::marker { color: var(--icon-gray); }
 .bo-rodape { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: .85rem; }
-.bo-status.aberto { color: #2a9d8f; font-weight: 600; }
-.bo-status.fechado { color: #c1121f; font-weight: 600; }
-.bo-contato { display: inline-block; margin-top: 8px; background: #fca311; color: #14213d; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-.bo-vazio { grid-column: 1 / -1; text-align: center; padding: 40px 0; color: #55606e; }
+.bo-status.aberto { color: var(--success); font-weight: 600; }
+.bo-status.fechado { color: var(--danger); font-weight: 600; }
+.bo-contato { display: inline-block; margin-top: 8px; background: var(--brand); color: var(--on-brand); padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background .2s; }
+.bo-contato:hover { background: var(--brand-hover); }
+.bo-vazio { grid-column: 1 / -1; text-align: center; padding: 40px 0; color: var(--text-secondary); }
