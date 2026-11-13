@@ -52,6 +52,9 @@ body.rx-page{overflow:hidden}
 .rx-btn:hover{background:var(--surface-2)}
 .rx-btn[aria-pressed="true"]{background:var(--orange);color:var(--on-brand);border-color:var(--orange)}
 .rx-btn svg{width:16px;height:16px;flex:none}
+/* Ícone em dois tons; no botão ativo (fundo amarelo) os dois tons viram escuros para manter contraste */
+.rx-btn[aria-pressed="true"] .icon-duo,.rx-btn[aria-pressed="true"] .icon-duo .icon-sec{color:var(--on-brand);stroke:var(--on-brand)}
+.rx-btn[aria-pressed="true"]:hover{background:var(--brand-hover);border-color:var(--brand-hover)}
 .rx-sep{width:1px;height:24px;background:var(--border)}
 .rx-sws{display:inline-flex;gap:6px;padding:0 4px}
 .rx-sw{width:22px;height:22px;border-radius:50%;border:0;box-shadow:inset 0 0 0 1px var(--hairline)}
