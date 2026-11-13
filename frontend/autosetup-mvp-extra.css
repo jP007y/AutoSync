@@ -13,34 +13,35 @@
    COMO USAR:
    Copie as regras abaixo para dentro do seu style.css (ou
    mantenha este arquivo e inclua-o depois do style.css no
-   index.html). Os valores de cor (--danger, --warning) devem
+   index.html). Os valores de cor vêm das variáveis do style.css (--danger, --warning, --brand).
+   Os valores de cor (--danger, --warning) devem
    ser ajustados para combinar com a paleta já usada no restante
    do site.
    ============================================================ */
 
 .status-box-orange {
-    background-color: rgba(245, 158, 11, 0.12);
-    border: 1px solid rgba(245, 158, 11, 0.35);
+    background-color: var(--warning-soft);
+    border: 1px solid var(--warning-line);
 }
 
 .status-box-orange .status-box-icon {
-    background-color: #f59e0b;
-    color: #1a1a1a;
+    background-color: var(--warning);
+    color: var(--on-brand);
 }
 
 .status-box-red {
-    background-color: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(239, 68, 68, 0.35);
+    background-color: var(--danger-soft);
+    border: 1px solid var(--danger-line);
 }
 
 .status-box-red .status-box-icon {
-    background-color: #ef4444;
-    color: #ffffff;
+    background-color: var(--danger);
+    color: var(--on-brand);
 }
 
 .status-danger {
-    background-color: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
+    background-color: var(--danger-soft);
+    color: var(--danger);
 }
 
 /* ------------------------------------------------------------
@@ -50,7 +51,7 @@
 .workshop-item {
     display: block;
     padding: 12px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--border);
     text-decoration: none;
     color: inherit;
 }
@@ -79,11 +80,11 @@
 }
 
 .workshop-contato {
-    color: #f59e0b;
+    color: var(--brand);
 }
 
 .workshop-ver-perfil {
-    color: #f59e0b;
+    color: var(--brand);
     font-weight: bold;
     margin-top: 6px;
 }

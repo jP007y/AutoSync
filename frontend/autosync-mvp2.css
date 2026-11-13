@@ -10,7 +10,7 @@
 .vehicle-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .vehicle-image .vehicle-image-label {
     position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 14px 10px;
-    background: linear-gradient(transparent, rgba(0,0,0,.75)); font-size: 13px; font-weight: 700;
+    background: linear-gradient(transparent, var(--overlay)); font-size: 13px; font-weight: 700;
 }
 .vehicle-resumo { color: var(--text-secondary); font-size: 13px; line-height: 1.55; margin: -8px 0 16px; max-width: 70ch; }
 
@@ -46,7 +46,7 @@
     width: 150px; background: var(--background); color: var(--text); border: 1px solid var(--border-light);
     border-radius: 8px; padding: 10px 12px; font-size: 18px; font-weight: 700;
 }
-.param-input-row input:focus { outline: 2px solid var(--orange); border-color: transparent; }
+.param-input-row input:focus { outline: none; border-color: var(--brand); box-shadow: var(--focus-ring); }
 .param-unit { color: var(--text-secondary); font-size: 14px; }
 .param-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .param-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -56,9 +56,9 @@
 }
 .param-presets button:hover { border-color: var(--orange); color: var(--orange); }
 .param-resumo { margin-top: 18px; border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; border: 1px solid var(--border-light); background: var(--surface-secondary); }
-.param-resumo.tom-ok { border-color: rgba(63,185,80,.5); background: rgba(63,185,80,.08); }
-.param-resumo.tom-atencao { border-color: rgba(245,158,11,.5); background: rgba(245,158,11,.1); }
-.param-resumo.tom-erro { border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.1); }
+.param-resumo.tom-ok { border-color: var(--success-line); background: var(--success-soft); }
+.param-resumo.tom-atencao { border-color: var(--warning-line); background: var(--warning-soft); }
+.param-resumo.tom-erro { border-color: var(--danger-line); background: var(--danger-soft); }
 .param-actions { display: flex; gap: 10px; margin-top: 18px; }
 .param-actions .primary-button { margin-top: 0; }
 .param-actions .secondary-button { white-space: nowrap; }
@@ -74,7 +74,7 @@
     background: var(--surface); border: 1px solid var(--border-light); color: var(--text);
     border-radius: 999px; padding: 6px 13px; font-size: 12.5px;
 }
-.chip-filtro[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #111; font-weight: 700; }
+.chip-filtro[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: var(--on-brand); font-weight: 700; }
 .dir-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
 .dir-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -91,8 +91,8 @@
 .dir-pessoa span { color: var(--text-secondary); }
 .dir-ver { margin-top: auto; padding-top: 6px; color: var(--orange); font-size: 13px; font-weight: 700; }
 .badges { display: flex; flex-wrap: wrap; gap: 6px; }
-.badge { font-size: 11.5px; border-radius: 999px; padding: 3px 10px; border: 1px solid rgba(255,138,0,.4); color: var(--orange); background: rgba(255,138,0,.1); }
-.badge.csv { border-color: rgba(63,185,80,.45); color: var(--green); background: rgba(63,185,80,.1); }
+.badge { font-size: 11.5px; border-radius: 999px; padding: 3px 10px; border: 1px solid var(--brand-line); color: var(--orange); background: var(--brand-soft); }
+.badge.csv { border-color: var(--success-line); color: var(--green); background: var(--success-soft); }
 .badge.neutro { border-color: var(--border-light); color: var(--text-secondary); background: transparent; }
 .dir-vazio { color: var(--text-secondary); padding: 30px 0; }
 
@@ -108,14 +108,14 @@
 .perfil-obs { color: var(--text-secondary); font-size: 13px; margin-top: 12px; }
 .perfil-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-top: 20px; }
 .perfil-card h2 { font-size: 18px; margin-bottom: 14px; }
-.perfil-card p.texto { color: #cfd6dc; font-size: 14px; line-height: 1.65; white-space: pre-line; }
+.perfil-card p.texto { color: var(--text); font-size: 14px; line-height: 1.65; white-space: pre-line; }
 .perfil-prof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; }
 .perfil-prof dt { color: var(--text-secondary); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
 .perfil-prof dd { font-size: 14px; line-height: 1.5; }
 .servico-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
 .servico-card { background: var(--surface-secondary); border: 1px solid var(--border-light); border-radius: 10px; padding: 16px; }
 .servico-card h3 { font-size: 15px; color: var(--orange); margin-bottom: 8px; }
-.servico-card p { font-size: 13px; color: #cfd6dc; line-height: 1.55; }
+.servico-card p { font-size: 13px; color: var(--text); line-height: 1.55; }
 .servico-card .linha { margin-top: 10px; font-size: 12.5px; color: var(--text-secondary); }
 .servico-card .linha b { color: var(--text); font-weight: 600; }
 .pub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
@@ -123,7 +123,7 @@
 .pub-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
 .pub-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
 .pub-body h3 { font-size: 15.5px; line-height: 1.3; }
-.pub-body p { font-size: 13px; color: #cfd6dc; line-height: 1.55; }
+.pub-body p { font-size: 13px; color: var(--text); line-height: 1.55; }
 .pub-data { font-size: 11.5px; color: var(--text-secondary); }
 .perfil-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
 .perfil-galeria img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light); }
@@ -132,21 +132,22 @@
 /* ---------- QR Code ---------- */
 .qr-page { width: 92%; max-width: 1000px; margin: 0 auto; padding: 24px 0 70px; }
 .qr-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 8px; }
-.qr-box { background: #fff; border-radius: 16px; padding: 22px; text-align: center; color: #111; }
+/* O QR fica sobre branco de propósito: leitores de QR precisam de alto contraste claro/escuro. */
+.qr-box { background: #fff; border-radius: 16px; padding: 22px; text-align: center; color: #14120F; }
 .qr-box canvas, .qr-box img, .qr-box svg { width: 100%; height: auto; display: block; }
 .qr-box .qr-legenda { margin-top: 12px; font-weight: 700; font-size: 15px; }
-.qr-box .qr-sub { font-size: 12px; color: #555; word-break: break-all; margin-top: 4px; }
+.qr-box .qr-sub { font-size: 12px; color: #4A4844; word-break: break-all; margin-top: 4px; }
 .qr-opcoes { display: grid; gap: 14px; }
 .qr-opcoes label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; }
 .qr-opcoes select, .qr-opcoes input[type="text"] {
     width: 100%; background: var(--surface-secondary); color: var(--text); border: 1px solid var(--border-light);
     border-radius: 8px; padding: 10px 12px; font-size: 14px;
 }
-.qr-aviso { border: 1px solid rgba(245,158,11,.45); background: rgba(245,158,11,.08); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; }
-.qr-passos { margin-left: 18px; font-size: 13.5px; line-height: 1.8; color: #cfd6dc; }
+.qr-aviso { border: 1px solid var(--warning-line); background: var(--warning-soft); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; }
+.qr-passos { margin-left: 18px; font-size: 13.5px; line-height: 1.8; color: var(--text); }
 
 /* ---------- Painel do prestador (campos novos) ---------- */
-.painel-servico { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 14px; margin-top: 12px; }
+.painel-servico { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 12px; }
 .painel-servico h3 { font-size: 14px; color: var(--orange); margin-bottom: 8px; }
 .painel-linha-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
