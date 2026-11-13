@@ -33,9 +33,11 @@ if (usuario) {
             document.getElementById("statAcessos").textContent = stats.totalAcessos;
             document.getElementById("statStatus").textContent =
                 stats.lojaCadastrada ? "Ativo" : "Sem loja cadastrada";
+            document.getElementById("statStatus").classList.remove("is-erro"); // só estilo
         } catch (erro) {
             document.getElementById("statAcessos").textContent = "—";
             document.getElementById("statStatus").textContent = "Erro ao carregar";
+            document.getElementById("statStatus").classList.add("is-erro"); // só estilo: mostra em vermelho
             console.error("Falha ao carregar estatísticas:", erro.message);
         }
     }
