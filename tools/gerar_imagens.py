@@ -18,7 +18,7 @@ sys.path.insert(0, BACKEND)
 from models.store import LOJAS_SEED  # noqa: E402
 
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "img"))
-LARANJA = "#ff8a00"
+LARANJA = "#F5B301"  # destaque da marca (amarelo AutoSync); nome mantido por compatibilidade
 
 CORPOS = {
     "hatch": dict(
@@ -72,7 +72,7 @@ def carro(tipo, cor, foco=None):
     </defs>
     {luz}
     <path d="{c['body']}" fill="url(#corpo)" stroke="#000" stroke-opacity=".25" stroke-width="2"/>
-    <path d="{c['vidros']}" fill="#0e1822" opacity=".88"/>
+    <path d="{c['vidros']}" fill="#15171a" opacity=".88"/>
     <rect x="{fx - 14}" y="{fy - 10}" width="30" height="14" rx="5" fill="#fff6c8"/>
     <rect x="{lx}" y="{ly}" width="12" height="20" rx="4" fill="#ff3b3b"/>
     <line x1="{x1 + 62}" y1="{CHAO - 10}" x2="{x2 - 62}" y2="{CHAO - 10}" stroke="#000" stroke-opacity=".25" stroke-width="2"/>
@@ -113,9 +113,9 @@ def fundo(w, h, titulo, sub=None):
     grade = "".join(f'<line x1="{x}" y1="0" x2="{x}" y2="{h}" stroke="#fff" stroke-opacity=".035"/>' for x in range(0, w, 40))
     grade += "".join(f'<line x1="0" y1="{y}" x2="{w}" y2="{y}" stroke="#fff" stroke-opacity=".035"/>' for y in range(0, h, 40))
     return f"""
-    <defs><radialGradient id="bg" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#2a3442"/><stop offset="1" stop-color="#0d1117"/></radialGradient></defs>
+    <defs><radialGradient id="bg" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#2E2F34"/><stop offset="1" stop-color="#121315"/></radialGradient></defs>
     <rect width="{w}" height="{h}" fill="url(#bg)"/>{grade}
-    <rect y="{CHAO + 12}" width="{w}" height="{h - CHAO - 12}" fill="#0a0d12" opacity=".6"/>
+    <rect y="{CHAO + 12}" width="{w}" height="{h - CHAO - 12}" fill="#0b0c0d" opacity=".6"/>
     """
 
 
@@ -128,10 +128,10 @@ def svg_servico(arte, titulo, veiculo):
     {carro(arte['carro'], arte['cor'], arte['foco'])}
     {destaque(arte['carro'], arte['foco'])}
     <text x="28" y="40" fill="{LARANJA}" font-size="15" font-weight="700" letter-spacing="2">SERVIÇO REALIZADO</text>
-    <text x="28" y="66" fill="#e6edf3" font-size="20" font-weight="700">{veiculo}</text>
+    <text x="28" y="66" fill="#F2F1EE" font-size="20" font-weight="700">{veiculo}</text>
     <rect x="28" y="394" width="{larg}" height="34" rx="17" fill="{LARANJA}"/>
-    <text x="{28 + larg / 2}" y="416" text-anchor="middle" fill="#111" font-size="16" font-weight="700">{selo}</text>
-    <text x="772" y="428" text-anchor="end" fill="#8b949e" font-size="12">Ilustração · AutoSync</text>
+    <text x="{28 + larg / 2}" y="416" text-anchor="middle" fill="#14120F" font-size="16" font-weight="700">{selo}</text>
+    <text x="772" y="428" text-anchor="end" fill="#9A9893" font-size="12">Ilustração · AutoSync</text>
     </svg>"""
 
 
@@ -139,10 +139,10 @@ def svg_carro(tipo, cor, marca, modelo, detalhe):
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="{marca} {modelo}">
     {fundo(800, 450, modelo)}
     {carro(tipo, cor)}
-    <text x="28" y="44" fill="#8b949e" font-size="16" font-weight="700" letter-spacing="3">{marca.upper()}</text>
-    <text x="28" y="84" fill="#e6edf3" font-size="36" font-weight="700">{modelo}</text>
+    <text x="28" y="44" fill="#9A9893" font-size="16" font-weight="700" letter-spacing="3">{marca.upper()}</text>
+    <text x="28" y="84" fill="#F2F1EE" font-size="36" font-weight="700">{modelo}</text>
     <text x="28" y="112" fill="{LARANJA}" font-size="16" font-weight="700">{detalhe}</text>
-    <text x="772" y="428" text-anchor="end" fill="#8b949e" font-size="12">Ilustração · AutoSync</text>
+    <text x="772" y="428" text-anchor="end" fill="#9A9893" font-size="12">Ilustração · AutoSync</text>
     </svg>"""
 
 
