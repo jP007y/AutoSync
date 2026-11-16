@@ -121,6 +121,9 @@ async function carregarVeiculo() {
         preencherFichaTecnica(veiculoAtual);
         addModificationButton.disabled = false;
 
+        // Seção "Peças recomendadas" passa a conhecer o veículo escolhido.
+        AutoSetupPecas.definirVeiculo(veiculoAtual);
+
         // Primeira vez: pede para a pessoa escolher entre os 3 carros.
         if (primeiraVisita) {
             abrirModalVeiculos();
@@ -151,6 +154,10 @@ function mostrarErroDeCarregamento(mensagem) {
     document.getElementById("vehicleCambio").textContent = "—";
 
     console.error("Falha ao carregar veículo:", mensagem);
+
+    // Backend fora do ar: a seção de peças mostra dados de exemplo
+    // (claramente marcados) em vez de ficar vazia ou quebrar.
+    AutoSetupPecas.mostrarExemplo();
 
     const secaoVeiculo = document.getElementById("veiculo");
     let aviso = document.getElementById("vehicleLoadError");
@@ -567,7 +574,9 @@ modificationOptions.forEach(function (button) {
         renderizarRisco(resultado.risco);
         renderizarLegalidade(resultado.legalidade);
         renderizarScore(resultado.score);
+        renderizarManutencao(categoria, resultado.manutencao || []);
         renderizarLojas(categoria);
+        AutoSetupPecas.adicionarCategoria(categoria);
 
         modificationModal.classList.remove("is-open");
     });
@@ -765,6 +774,49 @@ function renderizarScore(score) {
         document.getElementById(ids.valor).textContent = Math.round(barra.value);
         document.getElementById(ids.barra).style.width = `${barra.value}%`;
     });
+}
+
+
+/* ============================================================
+   RENDERIZAÇÃO — MANUTENÇÃO PREVISTA (só depois de simular)
+   ============================================================ */
+
+// Manutenção acumulada por categoria simulada: simular a mesma
+// categoria de novo substitui a recomendação anterior dela.
+const manutencaoPorCategoria = {};
+
+function renderizarManutencao(categoria, itens) {
+
+    manutencaoPorCategoria[categoria] = itens;
+
+    const lista = document.getElementById("maintenanceList");
+    const esc = AutoSyncUtil.esc;
+    lista.innerHTML = "";
+
+    let total = 0;
+    Object.keys(manutencaoPorCategoria).forEach(function (cat) {
+        const rotulo = rotulos[cat] || { nome: cat };
+        manutencaoPorCategoria[cat].forEach(function (item) {
+            const atencao = item.status === "atencao";
+            const artigo = document.createElement("article");
+            artigo.className = "maintenance-item";
+            artigo.innerHTML = `
+                <div>
+                    <strong>${esc(item.item)}</strong>
+                    <p>${esc(item.descricao)} · ${esc(rotulo.nome)}</p>
+                </div>
+                <span class="maintenance-km">${esc(item.quando)}</span>
+                <span class="status ${atencao ? "status-warning" : "status-compatible"}">
+                    ${atencao ? "ATENÇÃO" : "NORMAL"}
+                </span>
+            `;
+            lista.appendChild(artigo);
+            total += 1;
+        });
+    });
+
+    document.getElementById("maintenanceMeta").textContent =
+        `${total} ite${total === 1 ? "m" : "ns"} · baseada no setup`;
 }
 
 

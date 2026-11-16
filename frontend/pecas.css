@@ -1,0 +1,320 @@
+/* ============================================================
+   AUTOSYNC — SEÇÃO "PEÇAS RECOMENDADAS E COMPATÍVEIS"
+   Usa somente as variáveis de tema do style.css.
+   ============================================================ */
+
+/* `display: flex` abaixo anularia o atributo hidden */
+.pecas-aviso[hidden],
+.pecas-filtros[hidden] {
+    display: none;
+}
+
+.pecas-aviso {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+
+    background: var(--warning-soft);
+    border: 1px solid var(--warning-line);
+    border-radius: 8px;
+
+    color: var(--warning);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.pecas-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.pecas-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pecas-chip {
+    padding: 6px 12px;
+
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pecas-chip:hover {
+    border-color: var(--brand-line);
+    color: var(--text);
+}
+
+.pecas-chip.ativo {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand);
+}
+
+.pecas-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.pecas-check input {
+    accent-color: var(--brand);
+}
+
+/* Lista: cards mais largos que os .products padrão */
+.products.pecas-lista {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    align-items: start;
+}
+
+.pecas-vazio {
+    grid-column: 1 / -1;
+
+    padding: 24px;
+
+    background: var(--surface-2);
+    border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-align: center;
+}
+
+.pecas-vazio .secondary-button {
+    margin-top: 14px;
+}
+
+.pecas-card-topo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    padding: 12px 15px 0;
+}
+
+.pecas-selo {
+    display: inline-block;
+
+    padding: 3px 8px;
+
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    color: var(--icon-gray);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+.pecas-selo-cat {
+    background: var(--brand-soft);
+    border-color: var(--brand-line);
+    color: var(--brand);
+}
+
+.pecas-selo-ok {
+    background: var(--success-soft);
+    border-color: var(--success-line);
+    color: var(--success);
+}
+
+.pecas-selo-neutro {
+    color: var(--text-secondary);
+}
+
+.pecas-selo-exemplo {
+    background: var(--warning-soft);
+    border-color: var(--warning-line);
+    color: var(--brand-2);
+}
+
+.product p.pecas-motivo {
+    color: var(--brand-2);
+    font-weight: 700;
+}
+
+.product p.pecas-espec {
+    padding: 8px 10px;
+
+    background: var(--surface-2);
+    border-left: 2px solid var(--brand);
+    border-radius: 4px;
+
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.pecas-subtitulo {
+    display: block;
+
+    margin-top: 14px;
+
+    color: var(--icon-gray);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.pecas-ofertas,
+.pecas-lojas ul {
+    list-style: none;
+}
+
+.pecas-oferta {
+    margin-top: 10px;
+    padding: 12px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.pecas-oferta-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    font-size: 13px;
+}
+
+.pecas-oferta-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    margin-top: 6px;
+}
+
+.product p.pecas-oferta-titulo {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.product p.pecas-preco {
+    color: var(--brand);
+    font-weight: 700;
+}
+
+.product p.pecas-sem-oferta,
+.pecas-lista > .pecas-sem-oferta {
+    margin-top: 12px;
+
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.pecas-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.pecas-acoes .pecas-contato {
+    width: auto;
+    margin-top: 0;
+    padding: 8px 12px;
+
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.pecas-perfil {
+    color: var(--brand);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.pecas-perfil:hover {
+    color: var(--brand-hover);
+    text-decoration: underline;
+}
+
+.pecas-lojas {
+    margin-top: 12px;
+
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.pecas-lojas summary {
+    cursor: pointer;
+    color: var(--icon-gray);
+    font-weight: 700;
+}
+
+.pecas-lojas summary:hover {
+    color: var(--text);
+}
+
+.pecas-loja {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.pecas-loja:last-child {
+    border-bottom: none;
+}
+
+.pecas-loja strong {
+    color: var(--text);
+    font-size: 12px;
+}
+
+.pecas-loja .pecas-acoes {
+    margin-top: 0;
+}
+
+.pecas-chip:focus-visible,
+.pecas-perfil:focus-visible,
+.pecas-lojas summary:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 600px) {
+    .pecas-filtros {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pecas-loja {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pecas-acoes {
+        justify-content: flex-start;
+    }
+}

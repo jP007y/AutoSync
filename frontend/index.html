@@ -15,6 +15,9 @@
     <!-- Estilos da visualização 3D (Raio-X) -->
     <link rel="stylesheet" href="raio-x.css">
     <link rel="stylesheet" href="autosync-mvp2.css">
+
+    <!-- Seção Peças recomendadas (marketplace) -->
+    <link rel="stylesheet" href="pecas.css">
 </head>
 
 <body>
@@ -317,77 +320,20 @@
                             <h2>Manutenção prevista</h2>
                         </div>
 
-                        <span class="card-meta">
-                            Baseada no setup
+                        <span class="card-meta" id="maintenanceMeta">
+                            Aguardando simulação
                         </span>
 
                     </div>
 
 
-                    <div class="maintenance-list">
+                    <div class="maintenance-list" id="maintenanceList">
 
-
-                        <article class="maintenance-item">
-
-                            <div>
-                                <strong>Alinhamento</strong>
-
-                                <p>
-                                    Verificar geometria da suspensão
-                                </p>
-                            </div>
-
-                            <span class="maintenance-km">
-                                5.000 km
-                            </span>
-
-                            <span class="status status-warning">
-                                ATENÇÃO
-                            </span>
-
-                        </article>
-
-
-                        <article class="maintenance-item">
-
-                            <div>
-                                <strong>Pastilhas de freio</strong>
-
-                                <p>
-                                    Inspeção visual
-                                </p>
-                            </div>
-
-                            <span class="maintenance-km">
-                                10.000 km
-                            </span>
-
-                            <span class="status status-compatible">
-                                NORMAL
-                            </span>
-
-                        </article>
-
-
-                        <article class="maintenance-item">
-
-                            <div>
-                                <strong>Óleo do motor</strong>
-
-                                <p>
-                                    Troca preventiva
-                                </p>
-                            </div>
-
-                            <span class="maintenance-km">
-                                6.000 km
-                            </span>
-
-                            <span class="status status-compatible">
-                                NORMAL
-                            </span>
-
-                        </article>
+                        <p class="card-description" id="maintenanceEmpty">
+                            A manutenção prevista é calculada a partir das
+                            modificações simuladas. Adicione uma modificação
+                            para ver o que muda na manutenção do veículo.
+                        </p>
 
                     </div>
 
@@ -407,86 +353,42 @@
                                 MARKETPLACE
                             </span>
 
-                            <h2>Peças recomendadas</h2>
+                            <h2>Peças recomendadas e compatíveis</h2>
                         </div>
 
-                        <span class="card-meta">
-                            Compatíveis
+                        <span class="card-meta" id="pecasMeta">
+                            Aguardando simulação
                         </span>
 
                     </div>
 
+                    <p class="card-description" id="pecasDescricao">
+                        Peças e serviços que as modificações simuladas exigem,
+                        com a especificação compatível com o seu veículo e os
+                        prestadores que vendem ou instalam cada item.
+                    </p>
 
-                    <div class="products">
+                    <div class="pecas-aviso" id="pecasAviso" hidden></div>
 
+                    <div class="pecas-filtros" id="pecasFiltros" hidden>
+                        <div class="pecas-chips" id="pecasChips"></div>
+                        <label class="pecas-check">
+                            <input type="checkbox" id="pecasSoCompativeis">
+                            Só anúncios marcados como compatíveis com meu veículo
+                        </label>
+                    </div>
 
-                        <article class="product">
+                    <div class="products pecas-lista" id="pecasLista">
 
-                            <div class="product-image">
-                                ⚙️
-                            </div>
-
-                            <div class="product-content">
-
-                                <h3>Kit Suspensão Ajustável</h3>
-
-                                <p>
-                                    Compatível com Versys 650
-                                </p>
-
-                                <strong class="product-price">
-                                    R$ 2.490,00
-                                </strong>
-
-                            </div>
-
-                        </article>
-
-
-                        <article class="product">
-
-                            <div class="product-image">
-                                🛞
-                            </div>
-
-                            <div class="product-content">
-
-                                <h3>Pneu Esportivo 120/70</h3>
-
-                                <p>
-                                    Recomendado para o setup
-                                </p>
-
-                                <strong class="product-price">
-                                    R$ 899,90
-                                </strong>
-
-                            </div>
-
-                        </article>
-
-
-                        <article class="product">
-
-                            <div class="product-image">
-                                🔧
-                            </div>
-
-                            <div class="product-content">
-
-                                <h3>Serviço de Alinhamento</h3>
-
-                                <p>
-                                    Recomendado após instalação
-                                </p>
-
-                                <strong class="product-price">
-                                    R$ 180,00
-                                </strong>
-
-                            </div>
-
-                        </article>
+                        <div class="pecas-vazio" id="pecasVazio">
+                            <p>
+                                Adicione uma modificação para ver as peças
+                                necessárias e quem vende ou instala cada uma.
+                            </p>
+                            <button class="secondary-button" type="button" id="pecasVerCatalogo">
+                                Ver catálogo completo
+                            </button>
+                        </div>
 
                     </div>
 
@@ -831,6 +733,7 @@
 
     <!-- Base de regras CONTRAN / DETRAN / CTB (ainda local no frontend) -->
     <script src="data/regulamentacao.js"></script>
+    <script src="data/pecas-exemplo.js"></script>
 
     <!-- Motor de regras: calcula cascata, risco, legalidade e score -->
     <script src="js/rules-engine.js"></script>
@@ -843,6 +746,7 @@
     <script src="js/Auth.js"></script>
 
     <!-- Interações de interface + integração com API e motor de regras -->
+    <script src="js/pecas.js"></script>
     <script src="js/app.js"></script>
 
     <!-- Prévia 3D (three.js + motor do Raio-X) -->
