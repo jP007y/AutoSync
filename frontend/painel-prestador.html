@@ -197,6 +197,53 @@
             color: var(--text-secondary);
         }
 
+        .painel-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--surface-2);
+            color: var(--text);
+            font-size: 0.95em;
+            font-family: inherit;
+        }
+
+        .painel-anuncio-veiculos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .painel-anuncio-veiculos label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            font-size: 1em;
+            color: var(--text);
+        }
+
+        .painel-anuncio-veiculos input {
+            width: auto;
+            accent-color: var(--brand);
+        }
+
+        .painel-selo-exemplo {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 7px;
+            border-radius: 20px;
+            background: var(--warning-soft);
+            border: 1px solid var(--warning-line);
+            color: var(--brand-2);
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
         .painel-publicacao-excluir {
             background: transparent;
             border: 1px solid var(--danger-line);
@@ -435,6 +482,70 @@
             </form>
 
             <div id="listaPublicacoes" class="painel-lista-publicacoes"></div>
+
+        </section>
+
+        <!-- PEÇAS E INSTALAÇÕES (anúncios no marketplace) -->
+        <section class="painel-card" id="anunciosCard">
+            <h2>Peças e instalações que você oferece</h2>
+            <p class="card-description">
+                Seus anúncios aparecem na seção "Peças recomendadas e
+                compatíveis" para o consumidor que simulou uma modificação
+                que precisa daquela peça. Ele entra em contato com você
+                pelo contato da sua loja — não há venda pelo site.
+            </p>
+
+            <form id="anuncioForm">
+
+                <div class="painel-linha-2">
+                    <div class="painel-field">
+                        <label for="pecaAnuncio">Peça ou serviço</label>
+                        <select id="pecaAnuncio" required>
+                            <option value="">Carregando catálogo…</option>
+                        </select>
+                    </div>
+                    <div class="painel-field">
+                        <label for="tipoAnuncio">O que você faz</label>
+                        <select id="tipoAnuncio" required>
+                            <option value="venda_instalacao">Vendo e instalo</option>
+                            <option value="venda">Só vendo a peça</option>
+                            <option value="instalacao">Só faço a instalação</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="painel-field">
+                    <label for="tituloAnuncio">Título do anúncio</label>
+                    <input type="text" id="tituloAnuncio" required placeholder="Ex: Kit coilover regulável com instalação">
+                </div>
+
+                <div class="painel-field">
+                    <label for="descricaoAnuncio">Descrição (opcional)</label>
+                    <textarea id="descricaoAnuncio" rows="2" placeholder="Marca, garantia, o que está incluso..."></textarea>
+                </div>
+
+                <div class="painel-field">
+                    <label>Veículos compatíveis</label>
+                    <div class="painel-anuncio-veiculos" id="veiculosAnuncio">
+                        <span>Carregando veículos…</span>
+                    </div>
+                    <p class="card-description" style="margin:6px 0 0">
+                        Sem nenhum marcado, o anúncio aparece para todos os veículos como "Consultar compatibilidade".
+                    </p>
+                </div>
+
+                <div class="painel-field">
+                    <label for="precoAnuncio">Faixa de preço (opcional)</label>
+                    <input type="text" id="precoAnuncio" placeholder="Ex: A partir de R$ 2.000 — deixe em branco para combinar no contato">
+                </div>
+
+                <button type="submit" class="painel-submit" id="botaoAnunciar">Anunciar</button>
+
+                <p class="painel-mensagem" id="anuncioMensagem"></p>
+
+            </form>
+
+            <div id="listaAnuncios" class="painel-lista-publicacoes"></div>
 
         </section>
 

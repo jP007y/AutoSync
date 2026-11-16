@@ -140,6 +140,8 @@ if (usuario) {
         renderizarServicos();
 
         carregarPublicacoes();
+        preencherSelectDePecas();
+        carregarAnuncios();
     }
 
 
@@ -261,6 +263,7 @@ if (usuario) {
             lojaMensagem.className = "painel-mensagem sucesso";
             carregarEstatisticas(); // atualiza "Situação do cadastro" para "Ativo"
             carregarPublicacoes();  // agora que já temos lojaIdAtual, libera a seção de publicações
+            carregarAnuncios();
         } catch (erro) {
             lojaMensagem.textContent = erro.message;
             lojaMensagem.className = "painel-mensagem erro";
@@ -371,9 +374,179 @@ if (usuario) {
 
 
     /* ========================================================
+       ANÚNCIOS DE PEÇAS / INSTALAÇÕES (marketplace)
+       ======================================================== */
+
+    const TIPO_ANUNCIO = {
+        venda: "Vende",
+        instalacao: "Instala",
+        venda_instalacao: "Vende e instala",
+    };
+
+    let catalogoPecas = {};      // { categoria: [{ chave, nome, tipo, atende }] }
+    let veiculosDisponiveis = [];
+
+    function nomePeca(chave) {
+        let nome = chave;
+        Object.keys(catalogoPecas).forEach(function (cat) {
+            catalogoPecas[cat].forEach(function (p) { if (p.chave === chave) nome = p.nome; });
+        });
+        return nome;
+    }
+
+    // Só oferece peças das categorias que a loja atende (se houver alguma marcada)
+    function preencherSelectDePecas() {
+        const select = document.getElementById("pecaAnuncio");
+        const marcadas = categoriasMarcadas();
+        const categorias = Object.keys(catalogoPecas).filter(function (c) {
+            return !marcadas.length || marcadas.indexOf(c) >= 0;
+        });
+
+        select.innerHTML = '<option value="">Selecione…</option>';
+        categorias.forEach(function (cat) {
+            const grupo = document.createElement("optgroup");
+            grupo.label = AutoSyncUtil.categoriaLabel(cat);
+            catalogoPecas[cat].forEach(function (p) {
+                const opt = document.createElement("option");
+                opt.value = p.chave;
+                opt.textContent = p.nome + (p.tipo === "servico" ? " (serviço)" : "");
+                grupo.appendChild(opt);
+            });
+            select.appendChild(grupo);
+        });
+    }
+
+    function preencherVeiculos() {
+        const area = document.getElementById("veiculosAnuncio");
+        area.innerHTML = "";
+        if (!veiculosDisponiveis.length) {
+            area.innerHTML = "<span>Não foi possível carregar os veículos.</span>";
+            return;
+        }
+        veiculosDisponiveis.forEach(function (v) {
+            const label = document.createElement("label");
+            label.innerHTML = `<input type="checkbox" value="${v.id}"> ${esc(v.marca + " " + v.modelo)}`;
+            area.appendChild(label);
+        });
+    }
+
+    async function carregarCatalogoEVeiculos() {
+        try {
+            catalogoPecas = await AutoSetupApi.obterCatalogoPecas();
+        } catch (erro) {
+            console.error("Falha ao carregar catálogo de peças:", erro.message);
+            document.getElementById("pecaAnuncio").innerHTML = '<option value="">Catálogo indisponível</option>';
+        }
+        try {
+            veiculosDisponiveis = await AutoSetupApi.listarVeiculos();
+        } catch (erro) {
+            console.error("Falha ao carregar veículos:", erro.message);
+        }
+        preencherSelectDePecas();
+        preencherVeiculos();
+    }
+
+    async function carregarAnuncios() {
+        const lista = document.getElementById("listaAnuncios");
+
+        if (!lojaIdAtual) {
+            lista.innerHTML = `<p class="card-description">Salve sua loja primeiro para poder anunciar peças.</p>`;
+            return;
+        }
+
+        let anuncios;
+        try {
+            anuncios = await AutoSetupApi.listarAnunciosDoPrestador(usuario.id);
+        } catch (erro) {
+            lista.innerHTML = `<p class="card-description">Não foi possível carregar seus anúncios.</p>`;
+            return;
+        }
+
+        if (!anuncios.length) {
+            lista.innerHTML = `<p class="card-description">Você ainda não anunciou nenhuma peça ou instalação.</p>`;
+            return;
+        }
+
+        const nomesVeiculos = {};
+        veiculosDisponiveis.forEach(function (v) { nomesVeiculos[v.id] = v.marca + " " + v.modelo; });
+
+        lista.innerHTML = "";
+        anuncios.forEach(function (a) {
+            const veiculos = (a.veiculosCompativeis || []).map(function (id) { return nomesVeiculos[id] || ("#" + id); });
+            const item = document.createElement("div");
+            item.className = "painel-publicacao-item";
+            item.innerHTML = `
+                <div>
+                    <h4>${esc(a.titulo)}${a.exemplo ? '<span class="painel-selo-exemplo">Exemplo</span>' : ""}</h4>
+                    <p style="margin-bottom:4px">${esc(nomePeca(a.pecaChave))} · ${esc(AutoSyncUtil.categoriaLabel(a.categoria))} · ${esc(TIPO_ANUNCIO[a.tipo] || a.tipo)}</p>
+                    <p>${veiculos.length ? "Compatível com: " + esc(veiculos.join(", ")) : "Todos os veículos (consultar compatibilidade)"}${a.faixaPreco ? " · " + esc(a.faixaPreco) : ""}</p>
+                    ${a.descricao ? `<p>${esc(a.descricao)}</p>` : ""}
+                </div>
+                <button type="button" class="painel-publicacao-excluir">Excluir</button>
+            `;
+            item.querySelector("button").addEventListener("click", async function () {
+                if (!confirm("Excluir este anúncio?")) return;
+                try {
+                    await AutoSetupApi.excluirAnuncio(usuario.id, a.id);
+                    carregarAnuncios();
+                } catch (erro) {
+                    alert("Não foi possível excluir: " + erro.message);
+                }
+            });
+            lista.appendChild(item);
+        });
+    }
+
+    document.querySelectorAll("#categoriasContainer input[type=checkbox]").forEach(function (cb) {
+        cb.addEventListener("change", preencherSelectDePecas);
+    });
+
+    const anuncioForm = document.getElementById("anuncioForm");
+    const botaoAnunciar = document.getElementById("botaoAnunciar");
+    const anuncioMensagem = document.getElementById("anuncioMensagem");
+
+    anuncioForm.addEventListener("submit", async function (evento) {
+        evento.preventDefault();
+
+        if (!lojaIdAtual) {
+            anuncioMensagem.textContent = "Salve sua loja antes de anunciar.";
+            anuncioMensagem.className = "painel-mensagem erro";
+            return;
+        }
+
+        const dados = {
+            pecaChave: document.getElementById("pecaAnuncio").value,
+            tipo: document.getElementById("tipoAnuncio").value,
+            titulo: document.getElementById("tituloAnuncio").value.trim(),
+            descricao: document.getElementById("descricaoAnuncio").value.trim() || null,
+            veiculosCompativeis: Array.from(document.querySelectorAll("#veiculosAnuncio input:checked"))
+                .map(function (c) { return Number(c.value); }),
+            faixaPreco: document.getElementById("precoAnuncio").value.trim() || null,
+        };
+
+        botaoAnunciar.disabled = true;
+        anuncioMensagem.textContent = "Salvando anúncio...";
+        anuncioMensagem.className = "painel-mensagem";
+
+        try {
+            await AutoSetupApi.criarAnuncio(usuario.id, dados);
+            anuncioMensagem.textContent = "Anúncio publicado!";
+            anuncioMensagem.className = "painel-mensagem sucesso";
+            anuncioForm.reset();
+            carregarAnuncios();
+        } catch (erro) {
+            anuncioMensagem.textContent = erro.message;
+            anuncioMensagem.className = "painel-mensagem erro";
+        } finally {
+            botaoAnunciar.disabled = false;
+        }
+    });
+
+
+    /* ========================================================
        INICIALIZAÇÃO
        ======================================================== */
 
     carregarEstatisticas();
-    carregarLojaNoFormulario();
+    carregarCatalogoEVeiculos().then(carregarLojaNoFormulario);
 }
