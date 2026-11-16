@@ -425,6 +425,182 @@ def estatisticas_do_prestador(prestador_id: int, db: Session = Depends(get_db)):
 
 
 # ============================================================
+# PEÇAS RECOMENDADAS E ANÚNCIOS (marketplace — sem checkout)
+# ============================================================
+
+from services.compatibility import (  # noqa: E402
+    CATEGORIAS_VALIDAS, catalogo_publico, obter_peca, recomendar_pecas,
+)
+
+
+class AnuncioPayload(BaseModel):
+    pecaChave: str
+    tipo: str  # venda | instalacao | venda_instalacao
+    titulo: str
+    descricao: Optional[str] = None
+    veiculosCompativeis: Optional[List[int]] = None
+    faixaPreco: Optional[str] = None
+
+
+def _anuncio_atende_veiculo(anuncio: Anuncio, veiculo_id: Optional[int]) -> bool:
+    """Lista vazia = não restrito (consultar); senão o veículo precisa estar na lista."""
+    if not veiculo_id:
+        return True
+    lista = anuncio.veiculos_compativeis or []
+    return not lista or veiculo_id in lista
+
+
+@app.get("/pecas/catalogo")
+def catalogo_de_pecas():
+    """Tipos de peça/serviço por categoria (usado no painel do prestador)."""
+    return catalogo_publico()
+
+
+@app.get("/pecas/recomendadas")
+def pecas_recomendadas(
+    veiculo_id: int,
+    categorias: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    """
+    Peças recomendadas para as modificações simuladas no veículo.
+
+    - categorias: lista separada por vírgula (ex: "suspensao,rodasPneus").
+      Sem ela, devolve o catálogo de todas as categorias.
+
+    Cada peça traz a especificação compatível com a ficha técnica,
+    os anúncios ativos de prestadores que vendem/instalam a peça
+    (compatíveis com o veículo ou sem restrição) e as lojas que
+    atendem a categoria mas ainda não anunciaram essa peça.
+    """
+    veiculo = db.query(Vehicle).filter(Vehicle.id == veiculo_id).first()
+    if not veiculo:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado.")
+
+    pedidas = [c.strip() for c in (categorias or "").split(",") if c.strip()]
+    pedidas = [c for c in pedidas if c in CATEGORIAS_VALIDAS] or CATEGORIAS_VALIDAS
+
+    pecas = recomendar_pecas(veiculo.to_dict(), pedidas)
+
+    lojas = {loja.id: loja for loja in db.query(Store).all()}
+    anuncios = (
+        db.query(Anuncio)
+        .filter(Anuncio.ativo == True, Anuncio.categoria.in_(pedidas))  # noqa: E712
+        .order_by(Anuncio.exemplo.asc(), Anuncio.id.desc())
+        .all()
+    )
+
+    for peca in pecas:
+        da_peca = [
+            a for a in anuncios
+            if a.peca_chave == peca["chave"] and a.loja_id in lojas
+            and _anuncio_atende_veiculo(a, veiculo_id)
+        ]
+        peca["anuncios"] = []
+        for a in da_peca:
+            dados = a.to_dict(lojas[a.loja_id])
+            dados["compativelComVeiculo"] = veiculo_id in (a.veiculos_compativeis or [])
+            peca["anuncios"].append(dados)
+
+        com_anuncio = {a.loja_id for a in da_peca}
+        peca["lojasDaCategoria"] = [
+            {"id": l.id, "nome": l.nome, "regiao": l.regiao, "contato": l.contato, "emiteCSV": l.emite_csv}
+            for l in lojas.values()
+            if peca["categoria"] in (l.categorias or []) and l.id not in com_anuncio
+        ]
+
+    return {
+        "veiculo": {"id": veiculo.id, "nome": f"{veiculo.marca} {veiculo.modelo}"},
+        "categorias": pedidas,
+        "pecas": pecas,
+    }
+
+
+@app.get("/anuncios")
+def listar_anuncios(
+    peca: Optional[str] = None,
+    categoria: Optional[str] = None,
+    veiculo_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    """Lista anúncios ativos, com filtros opcionais por peça, categoria e veículo."""
+    query = db.query(Anuncio).filter(Anuncio.ativo == True)  # noqa: E712
+    if peca:
+        query = query.filter(Anuncio.peca_chave == peca)
+    if categoria:
+        query = query.filter(Anuncio.categoria == categoria)
+
+    lojas = {loja.id: loja for loja in db.query(Store).all()}
+    return [
+        a.to_dict(lojas.get(a.loja_id))
+        for a in query.order_by(Anuncio.id.desc()).all()
+        if a.loja_id in lojas and _anuncio_atende_veiculo(a, veiculo_id)
+    ]
+
+
+def _loja_do_prestador_ou_400(prestador_id: int, db: Session) -> Store:
+    _obter_prestador_ou_404(prestador_id, db)
+    loja = db.query(Store).filter(Store.prestador_id == prestador_id).first()
+    if not loja:
+        raise HTTPException(status_code=400, detail="Cadastre sua loja antes de anunciar peças.")
+    return loja
+
+
+@app.get("/prestadores/{prestador_id}/anuncios")
+def anuncios_do_prestador(prestador_id: int, db: Session = Depends(get_db)):
+    """Anúncios da loja do prestador (lista vazia se ainda não tem loja)."""
+    _obter_prestador_ou_404(prestador_id, db)
+    loja = db.query(Store).filter(Store.prestador_id == prestador_id).first()
+    if not loja:
+        return []
+    anuncios = db.query(Anuncio).filter(Anuncio.loja_id == loja.id).order_by(Anuncio.id.desc()).all()
+    return [a.to_dict() for a in anuncios]
+
+
+@app.post("/prestadores/{prestador_id}/anuncios")
+def criar_anuncio(prestador_id: int, payload: AnuncioPayload, db: Session = Depends(get_db)):
+    """Cria um anúncio de peça/instalação na loja do prestador."""
+    loja = _loja_do_prestador_ou_400(prestador_id, db)
+
+    categoria, peca = obter_peca(payload.pecaChave)
+    if not peca:
+        raise HTTPException(status_code=400, detail="Peça inválida. Escolha uma peça do catálogo.")
+    if payload.tipo not in TIPOS_ANUNCIO:
+        raise HTTPException(status_code=400, detail=f"Tipo inválido. Use um de: {', '.join(TIPOS_ANUNCIO)}.")
+    if not payload.titulo.strip():
+        raise HTTPException(status_code=400, detail="Informe um título para o anúncio.")
+
+    anuncio = Anuncio(
+        loja_id=loja.id,
+        peca_chave=payload.pecaChave,
+        categoria=categoria,
+        tipo=payload.tipo,
+        titulo=payload.titulo.strip(),
+        descricao=payload.descricao,
+        veiculos_compativeis=payload.veiculosCompativeis or [],
+        faixa_preco=(payload.faixaPreco or "").strip() or None,
+        ativo=True,
+        exemplo=False,
+    )
+    db.add(anuncio)
+    db.commit()
+    db.refresh(anuncio)
+    return anuncio.to_dict()
+
+
+@app.delete("/prestadores/{prestador_id}/anuncios/{anuncio_id}")
+def excluir_anuncio(prestador_id: int, anuncio_id: int, db: Session = Depends(get_db)):
+    """Exclui um anúncio — só o dono da loja pode excluir."""
+    loja = _loja_do_prestador_ou_400(prestador_id, db)
+    anuncio = db.query(Anuncio).filter(Anuncio.id == anuncio_id, Anuncio.loja_id == loja.id).first()
+    if not anuncio:
+        raise HTTPException(status_code=404, detail="Anúncio não encontrado.")
+    db.delete(anuncio)
+    db.commit()
+    return {"status": "ok", "id": anuncio_id}
+
+
+# ============================================================
 # SITE (frontend servido pelo próprio backend)
 # ============================================================
 # Com isso, UM comando só (uvicorn) entrega API + site:
