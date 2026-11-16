@@ -13,6 +13,8 @@
      - legalidade: status legal (regular/irregular) com base em
        AUTOSETUP_REGULAMENTACAO
      - score: nota geral + barras (Segurança/Desempenho/Manutenção)
+     - manutencao: manutenção prevista após a modificação
+       (lista de { item, descricao, quando, status: normal|atencao })
 
    Este motor é 100% baseado em regras determinísticas (sem
    chamada a IA/API). Isso é intencional para o MVP: permite
@@ -89,6 +91,12 @@ const AutoSetupEngine = (function () {
             ? { status: "irregular", titulo: "Abaixo da altura mínima", descricao: `${regra.baseLegal} exige no mínimo ${alturaMinima}mm para o PBT deste veículo.` }
             : { status: "regular", titulo: "Dentro do limite legal", descricao: `Atende ${regra.baseLegal}, desde que emitido o CSV e atualizado o CRLV-e.` };
 
+        const manutencao = [
+            { item: "Alinhamento e balanceamento", descricao: "Corrigir a geometria após a mudança de altura", quando: "Logo após a instalação", status: "atencao" },
+            { item: "Pneus", descricao: "Inspecionar desgaste nas bordas internas", quando: rebaixamentoMm > 30 ? "A cada 5.000 km" : "A cada 10.000 km", status: rebaixamentoMm > 30 ? "atencao" : "normal" },
+            { item: "Buchas e batentes", descricao: "Verificar folgas e batidas de fim de curso", quando: "A cada 10.000 km", status: "normal" }
+        ];
+
         const scoreSeguranca = abaixoDoMinimo ? 25 : clamp(95 - rebaixamentoMm, 40, 95);
         const scoreDesempenho = clamp(70 + rebaixamentoMm * 0.5, 60, 92);
         const scoreManutencao = clamp(90 - rebaixamentoMm * 0.8, 40, 90);
@@ -96,6 +104,7 @@ const AutoSetupEngine = (function () {
         return {
             cascata,
             consequencias,
+            manutencao,
             risco,
             legalidade,
             score: montarScore(scoreSeguranca, scoreDesempenho, scoreManutencao,
@@ -138,6 +147,12 @@ const AutoSetupEngine = (function () {
             ? { status: "regular", titulo: "Dentro da equivalência exigida", descricao: `Atende ${regra.baseLegal} (diâmetro externo equivalente ao original).` }
             : { status: "irregular", titulo: "Diâmetro externo alterado", descricao: `${regra.baseLegal} proíbe aumentar ou diminuir o diâmetro externo do conjunto.` };
 
+        const manutencao = [
+            { item: "Balanceamento", descricao: "Balancear o novo conjunto roda+pneu", quando: "Logo após a montagem", status: "atencao" },
+            { item: "Calibragem", descricao: "Ajustar pressão para a nova medida de pneu", quando: "A cada 15 dias", status: "normal" },
+            { item: "Velocímetro", descricao: dentroDaTolerancia ? "Desvio de leitura dentro da tolerância" : "Conferir desvio de leitura de velocidade", quando: "Após a instalação", status: dentroDaTolerancia ? "normal" : "atencao" }
+        ];
+
         const scoreSeguranca = dentroDaTolerancia ? 88 : clamp(88 - diffPercentual * 3, 30, 88);
         const scoreDesempenho = clamp(75 + (novoDiametro - diametroOriginal) * 0.1, 55, 90);
         const scoreManutencao = dentroDaTolerancia ? 82 : clamp(82 - diffPercentual * 2, 40, 82);
@@ -145,6 +160,7 @@ const AutoSetupEngine = (function () {
         return {
             cascata,
             consequencias,
+            manutencao,
             risco,
             legalidade,
             score: montarScore(scoreSeguranca, scoreDesempenho, scoreManutencao,
@@ -191,6 +207,11 @@ const AutoSetupEngine = (function () {
             descricao: `${regra.baseLegal}: risco de infração grave se o ruído superar o original de fábrica.`
         };
 
+        const manutencao = [
+            { item: "Medição de ruído", descricao: "Comparar o ruído com o valor original de fábrica", quando: "Logo após a instalação", status: "atencao" },
+            { item: "Fixações e juntas", descricao: "Verificar abraçadeiras, coxins e vazamentos", quando: "A cada 10.000 km", status: "normal" }
+        ];
+
         const scoreSeguranca = 60; // não é o item de maior risco de segurança, mas há infração
         const scoreDesempenho = superdimensionado ? 45 : 68;
         const scoreManutencao = 70;
@@ -198,6 +219,7 @@ const AutoSetupEngine = (function () {
         return {
             cascata,
             consequencias,
+            manutencao,
             risco,
             legalidade,
             score: montarScore(scoreSeguranca, scoreDesempenho, scoreManutencao,
@@ -221,9 +243,14 @@ const AutoSetupEngine = (function () {
             { titulo: "Análise limitada", impacto: "Indisponível", descricao: "Este tipo de modificação ainda não tem cálculo de cascata neste MVP." }
         ];
 
+        const manutencao = [
+            { item: "Revisão especializada", descricao: "Inspeção do sistema alterado por um profissional", quando: "Logo após a instalação", status: "atencao" }
+        ];
+
         return {
             cascata,
             consequencias,
+            manutencao,
             risco: { status: "atencao", titulo: "Análise não modelada", descricao: "Avalie com um profissional especializado antes de prosseguir." },
             legalidade: regra
                 ? { status: "atencao", titulo: "Verificar exigências", descricao: regra.descricaoResumo }
