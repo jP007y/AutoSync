@@ -217,7 +217,62 @@ const AutoSetupApi = (function () {
         return resposta.json();
     }
 
+    /**
+     * Peças recomendadas para as modificações simuladas num veículo,
+     * com os anúncios de prestadores que vendem/instalam cada uma.
+     * @param {number} veiculoId
+     * @param {string[]} categorias - ex: ["suspensao", "rodasPneus"]; vazio = todas
+     */
+    async function buscarPecasRecomendadas(veiculoId, categorias = []) {
+        const params = new URLSearchParams({ veiculo_id: String(veiculoId) });
+        if (categorias.length) params.set("categorias", categorias.join(","));
+        const resposta = await fetch(`${BASE_URL}/pecas/recomendadas?${params.toString()}`);
+        if (!resposta.ok) throw new Error(`Erro ao buscar peças (HTTP ${resposta.status}).`);
+        return resposta.json();
+    }
+
+    /** Catálogo de tipos de peça por categoria (para o prestador anunciar). */
+    async function obterCatalogoPecas() {
+        const resposta = await fetch(`${BASE_URL}/pecas/catalogo`);
+        if (!resposta.ok) throw new Error(`Erro ao buscar catálogo (HTTP ${resposta.status}).`);
+        return resposta.json();
+    }
+
+    /** Anúncios de peças/instalações da loja do prestador logado. */
+    async function listarAnunciosDoPrestador(prestadorId) {
+        const resposta = await fetch(`${BASE_URL}/prestadores/${prestadorId}/anuncios`);
+        if (!resposta.ok) throw new Error(`Erro ao buscar anúncios (HTTP ${resposta.status}).`);
+        return resposta.json();
+    }
+
+    /** Cria um anúncio de peça/instalação na loja do prestador logado. */
+    async function criarAnuncio(prestadorId, dadosAnuncio) {
+        const resposta = await fetch(`${BASE_URL}/prestadores/${prestadorId}/anuncios`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dadosAnuncio),
+        });
+        const corpo = await resposta.json().catch(() => ({}));
+        if (!resposta.ok) throw new Error(corpo.detail || "Não foi possível criar o anúncio.");
+        return corpo;
+    }
+
+    /** Exclui um anúncio do prestador logado. */
+    async function excluirAnuncio(prestadorId, anuncioId) {
+        const resposta = await fetch(
+            `${BASE_URL}/prestadores/${prestadorId}/anuncios/${anuncioId}`,
+            { method: "DELETE" }
+        );
+        if (!resposta.ok) throw new Error(`Erro ao excluir anúncio (HTTP ${resposta.status}).`);
+        return resposta.json();
+    }
+
     return {
+        buscarPecasRecomendadas,
+        obterCatalogoPecas,
+        listarAnunciosDoPrestador,
+        criarAnuncio,
+        excluirAnuncio,
         listarLojas,
         obterRede,
         buscarVeiculo,
