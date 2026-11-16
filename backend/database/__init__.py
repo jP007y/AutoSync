@@ -75,7 +75,7 @@ def init_db():
     (import tardio) — evita import circular entre
     `database/__init__.py` e `models/vehicle.py`.
     """
-    from models import vehicle, store, user, post  # noqa: F401  (garante o registro dos models)
+    from models import vehicle, store, user, post, anuncio  # noqa: F401  (garante o registro dos models)
     Base.metadata.create_all(bind=engine)
     _migrar_colunas_novas()
 

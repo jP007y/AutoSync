@@ -37,6 +37,7 @@ from models.vehicle import Vehicle, seed_vehicles
 from models.store import Store, seed_stores
 from models.user import User, TIPOS_VALIDOS
 from models.post import Post
+from models.anuncio import Anuncio, TIPOS_ANUNCIO, seed_anuncios
 
 app = FastAPI(
     title="AutoSetup API",
@@ -63,6 +64,7 @@ def startup():
     try:
         seed_vehicles(db)
         seed_stores(db)
+        seed_anuncios(db)
     finally:
         db.close()
 
