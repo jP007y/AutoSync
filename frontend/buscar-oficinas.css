@@ -104,3 +104,11 @@ body { margin: 0; font-family: system-ui, Arial, sans-serif; background: var(--b
   .bo-local > .bo-botao { width: 100%; }
   .bo-grid { grid-template-columns: 1fr; }
 }
+
+/* Chips em dois grupos: tipos de serviço e categorias técnicas */
+.bo-chips .bo-grupo { width: 100%; }
+.bo-grupo + .bo-grupo { margin-top: 8px; }
+.bo-grupo-titulo { margin: 0 0 6px; color: var(--text-secondary); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.bo-grupo-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.bo-chip { min-height: 36px; }
+.bo-tag-tecnica { background: var(--surface-2); border-color: var(--border); color: var(--text-secondary); }

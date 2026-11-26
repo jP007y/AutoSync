@@ -12,20 +12,17 @@
 (function () {
   "use strict";
 
-  // ===== CATEGORIAS =====
-  // Tipos de serviço (dados de exemplo) + categorias técnicas do
-  // backend (js/util.js). Os chips são montados a partir das
-  // categorias das oficinas carregadas, nesta ordem.
-  const NOMES_CATEGORIAS = Object.assign({
-    tuning: "Tuning",
-    vistoria: "Vistoria",
-    estetico: "Reparos estéticos",
-    martelinho: "Martelinho de ouro",
-    funilaria: "Funilaria e pintura",
-    preventiva: "Manutenção preventiva",
-    gas: "Fiscalização de gás (GNV)",
-    pequenos: "Pequenos reparos"
-  }, window.AutoSyncUtil ? AutoSyncUtil.CATEGORIAS : {});
+  // ===== TIPOS DE SERVIÇO E CATEGORIAS TÉCNICAS =====
+  // Dois grupos de chips: primeiro os tipos de serviço (campo
+  // tiposServico da loja), depois as categorias técnicas (campo
+  // categorias). Os nomes vêm de js/util.js; cada grupo só mostra
+  // as chaves presentes nas oficinas carregadas, nesta ordem.
+  const NOMES_TIPOS = (window.AutoSyncUtil && AutoSyncUtil.TIPOS_SERVICO) || {};
+  const NOMES_TECNICAS = (window.AutoSyncUtil && AutoSyncUtil.CATEGORIAS) || {};
+  const GRUPOS_FILTRO = [
+    { prefixo: "tipo", campo: "tipos", titulo: "Tipos de serviço", nomes: NOMES_TIPOS },
+    { prefixo: "cat", campo: "categorias", titulo: "Categorias técnicas", nomes: NOMES_TECNICAS }
+  ];
 
   const RAIO_TERRA_KM = 6371;
   const TEMPO_LIMITE_API_MS = 5000;
@@ -36,7 +33,7 @@
   // ===== ESTADO =====
   let todas = [];
   let modoExemplo = false;
-  const sel = new Set();
+  const sel = new Set(); // chaves com prefixo do grupo: "tipo:tuning", "cat:suspensao"
   let referencia = null;   // { lat, lng, origem: "gps" | "busca" | "cidade", rotulo }
   let mapa = null;
   let camadaOficinas = null;
@@ -50,8 +47,17 @@
     return String(s == null ? "" : s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   }
 
-  function nomeCategoria(id) {
-    return NOMES_CATEGORIAS[id] || id;
+  function nomeTipo(id) {
+    return NOMES_TIPOS[id] || id;
+  }
+
+  function nomeTecnica(id) {
+    return NOMES_TECNICAS[id] || id;
+  }
+
+  /** Nomes de todos os filtros da oficina: tipos de serviço e depois categorias técnicas. */
+  function nomesDaOficina(o) {
+    return o.tipos.map(nomeTipo).concat(o.categorias.map(nomeTecnica));
   }
 
   function el(tag, classe, texto) {
@@ -159,6 +165,7 @@
       bairro: bairroDoEndereco(l.endereco),
       endereco: l.endereco || "",
       nota: null,
+      tipos: Array.isArray(l.tiposServico) ? l.tiposServico : [], // lojas antigas: sem tipos
       categorias: Array.isArray(l.categorias) ? l.categorias : [],
       servicos: Array.isArray(l.especialidades) ? l.especialidades : [],
       horarios: lerHorario(l.horario),
@@ -181,6 +188,7 @@
       bairro: o.bairro,
       endereco: "",
       nota: typeof o.nota === "number" ? o.nota : null,
+      tipos: o.tiposServico || [],
       categorias: o.categorias || [],
       servicos: o.servicos || [],
       horarios: [{ dias: o.dias, abre: o.abre * 60, fecha: o.fecha * 60 }],
@@ -245,10 +253,13 @@
     let lista = todas.filter((o) => {
       if (cidade && o.cidade !== cidade) return false;
       if (soAbertas && estaAberta(o) !== true) return false;
-      if (sel.size && ![...sel].every((c) => o.categorias.includes(c))) return false;
+      if (sel.size && ![...sel].every((chave) => {
+        const [prefixo, id] = chave.split(":");
+        return (prefixo === "tipo" ? o.tipos : o.categorias).includes(id);
+      })) return false;
       if (termo) {
         const texto = norm([o.nome, o.bairro, o.cidade, o.endereco, ...o.servicos,
-          ...o.categorias.map(nomeCategoria)].join(" "));
+          ...nomesDaOficina(o)].join(" "));
         if (!texto.includes(termo)) return false;
       }
       return true;
@@ -333,7 +344,8 @@
       if (o.distancia != null) card.appendChild(el("p", "bo-distancia", textoDistancia(o)));
 
       const tags = el("div", "bo-tags");
-      o.categorias.forEach((c) => tags.appendChild(el("span", "bo-tag", nomeCategoria(c))));
+      o.tipos.forEach((t) => tags.appendChild(el("span", "bo-tag", nomeTipo(t))));
+      o.categorias.forEach((c) => tags.appendChild(el("span", "bo-tag bo-tag-tecnica", nomeTecnica(c))));
       card.appendChild(tags);
 
       if (o.servicos.length) {
@@ -408,7 +420,7 @@
   function conteudoPopup(o) {
     const box = el("div", "bo-popup");
     box.appendChild(el("strong", "", o.nome + (o.exemplo ? " (exemplo)" : "")));
-    box.appendChild(el("p", "bo-popup-cats", o.categorias.map(nomeCategoria).join(" · ")));
+    box.appendChild(el("p", "bo-popup-cats", nomesDaOficina(o).join(" · ")));
     if (o.distancia != null) box.appendChild(el("p", "bo-popup-dist", textoDistancia(o)));
     box.appendChild(statusEl(o, "bo-status"));
     const acoes = el("div", "bo-popup-acoes");
@@ -582,23 +594,39 @@
   // ===== INICIALIZAÇÃO =====
   function montarCategorias() {
     const area = $("bo-categorias");
-    const ordem = Object.keys(NOMES_CATEGORIAS);
-    const presentes = [...new Set(todas.flatMap((o) => o.categorias))]
-      .sort((a, b) => {
-        const ia = ordem.indexOf(a), ib = ordem.indexOf(b);
-        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
+    GRUPOS_FILTRO.forEach((g) => {
+      const ordem = Object.keys(g.nomes);
+      const presentes = [...new Set(todas.flatMap((o) => o[g.campo]))]
+        .sort((a, b) => {
+          const ia = ordem.indexOf(a), ib = ordem.indexOf(b);
+          return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
+        });
+      if (!presentes.length) return; // grupo sem nenhuma oficina: não aparece
+
+      const grupo = el("div", "bo-grupo");
+      const titulo = el("p", "bo-grupo-titulo", g.titulo);
+      titulo.id = "bo-grupo-" + g.prefixo;
+      const chips = el("div", "bo-grupo-chips");
+      chips.setAttribute("role", "group");
+      chips.setAttribute("aria-labelledby", titulo.id);
+
+      presentes.forEach((id) => {
+        const chave = g.prefixo + ":" + id;
+        const b = el("button", "bo-chip", g.nomes[id] || id);
+        b.type = "button";
+        b.setAttribute("aria-pressed", "false");
+        b.addEventListener("click", () => {
+          if (sel.has(chave)) sel.delete(chave); else sel.add(chave);
+          b.classList.toggle("ativo", sel.has(chave));
+          b.setAttribute("aria-pressed", String(sel.has(chave)));
+          filtrar();
+        });
+        chips.appendChild(b);
       });
-    presentes.forEach((id) => {
-      const b = el("button", "bo-chip", nomeCategoria(id));
-      b.type = "button";
-      b.setAttribute("aria-pressed", "false");
-      b.addEventListener("click", () => {
-        if (sel.has(id)) sel.delete(id); else sel.add(id);
-        b.classList.toggle("ativo", sel.has(id));
-        b.setAttribute("aria-pressed", String(sel.has(id)));
-        filtrar();
-      });
-      area.appendChild(b);
+
+      grupo.appendChild(titulo);
+      grupo.appendChild(chips);
+      area.appendChild(grupo);
     });
   }
 
