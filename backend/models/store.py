@@ -17,7 +17,7 @@ pedida.
 ============================================================
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, JSON, ForeignKey, Float
 from database import Base
 
 
@@ -56,6 +56,12 @@ class Store(Base):
     horario = Column(String, nullable=True)
     endereco = Column(String, nullable=True)
 
+    # Posição da loja no mapa (aba "Buscar oficinas"). Marcada pelo
+    # prestador no painel (clicando/arrastando o pino ou buscando o
+    # endereço uma única vez). Nulas = loja ainda sem posição no mapa.
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+
     # Detalhes por categoria atendida:
     # {"suspensao": {"descricao": "...", "preco": "...", "prazo": "..."}, ...}
     servicos = Column(JSON, nullable=True)
@@ -82,6 +88,8 @@ class Store(Base):
             "experienciaAnos": self.experiencia_anos,
             "horario": self.horario,
             "endereco": self.endereco,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
             "servicos": self.servicos or {},
             "fotos": self.fotos or [],
             "contadorAcessos": self.contador_acessos,
@@ -258,6 +266,20 @@ EMAILS_DEMO = {
     "Stance Brasil Custom": "stance@demo.autosync",
 }
 
+# Coordenadas APROXIMADAS dos endereços fictícios das lojas de
+# demonstração (ficam separadas de LOJAS_SEED para não mexer no
+# script tools/gerar_imagens.py, que importa aquela lista).
+COORDENADAS_SEED = {
+    "Suspensão Pro RJ": (-22.8445, -43.2745),            # Penha, Rio de Janeiro
+    "Oficina Central SP": (-23.5890, -46.6345),          # Vila Mariana, São Paulo
+    "Turbo Exhaust BH": (-19.9330, -43.9690),            # Gameleira, Belo Horizonte
+    "Rodas & Cia Curitiba": (-25.4310, -49.2640),        # Centro, Curitiba
+    "PowerTune Performance": (-22.9150, -43.0930),       # São Francisco, Niterói
+    "FreioMax Centro Automotivo": (-22.9025, -43.2810),  # Méier, Rio de Janeiro
+    "Escape Sound Lab": (-22.8930, -47.0700),            # Guanabara, Campinas
+    "Stance Brasil Custom": (-30.0090, -51.1600),        # Passo d'Areia, Porto Alegre
+}
+
 CAMPOS_PERFIL = ["descricao", "responsavel", "formacao", "especialidades",
                  "experiencia_anos", "horario", "endereco", "servicos"]
 
@@ -267,6 +289,7 @@ def seed_stores(db):
     Garante as 8 lojas de demonstração, sem apagar nada:
     - cria as que não existem (por nome);
     - nas já existentes, só PREENCHE campos de perfil que estejam vazios;
+    - latitude/longitude de exemplo só entram quando estão NULL;
     - cria publicações apenas para lojas de demonstração que ainda não têm nenhuma;
     - as 4 lojas novas ganham uma conta de prestador de demonstração
       (e-mail em EMAILS_DEMO, senha em SENHA_DEMO) para testar o painel.
@@ -288,6 +311,12 @@ def seed_stores(db):
             for campo in CAMPOS_PERFIL:
                 if not getattr(loja, campo):
                     setattr(loja, campo, dados.get(campo))
+
+        # Latitude/longitude: preenche SÓ quando estão vazias (NULL), para
+        # nunca sobrescrever uma posição marcada pelo prestador no painel.
+        coords = COORDENADAS_SEED.get(loja.nome)
+        if coords and loja.latitude is None and loja.longitude is None:
+            loja.latitude, loja.longitude = coords
 
         email = EMAILS_DEMO.get(loja.nome)
         if email and loja.prestador_id is None:

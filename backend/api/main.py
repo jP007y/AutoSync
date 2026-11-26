@@ -28,7 +28,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from typing import Optional, List
 
@@ -135,6 +135,10 @@ class LojaPayload(BaseModel):
     horario: Optional[str] = None
     endereco: Optional[str] = None
     servicos: Optional[dict] = None
+    # Posição no mapa (opcional). Se o painel não enviar esses campos,
+    # a posição já salva é mantida.
+    latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    longitude: Optional[float] = Field(default=None, ge=-180, le=180)
 
 
 class PublicacaoPayload(BaseModel):
@@ -307,6 +311,15 @@ def criar_ou_atualizar_loja(
     loja.horario = payload.horario
     loja.endereco = payload.endereco
     loja.servicos = payload.servicos or {}
+
+    # Só mexe na posição se o painel mandou os campos (mesmo que nulos,
+    # para permitir remover o pino). Latitude e longitude andam juntas.
+    enviados = payload.model_fields_set
+    if "latitude" in enviados or "longitude" in enviados:
+        if (payload.latitude is None) != (payload.longitude is None):
+            raise HTTPException(status_code=400, detail="Informe latitude e longitude juntas.")
+        loja.latitude = payload.latitude
+        loja.longitude = payload.longitude
 
     db.commit()
     db.refresh(loja)
