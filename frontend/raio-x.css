@@ -77,7 +77,7 @@ body.rx-page{overflow:hidden}
   .rx-stage .rx-canvas-wrap{position:relative;height:46vh;min-height:280px}
   .rx-ui{position:relative;inset:auto;display:flex;flex-direction:column;padding:12px;gap:10px;pointer-events:auto;background:var(--bg)}
   .rx-head h1{font-size:22px}
-  .rx-parts{flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:6px;gap:4px}
+  .rx-parts{flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:6px;gap:4px;align-self:stretch;min-width:0;max-width:100%}
   .rx-cat{display:none}
   .rx-part{width:auto;border:1px solid var(--border-light);padding:6px 10px}
   .rx-info{max-height:none;padding:16px}

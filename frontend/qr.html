@@ -13,6 +13,15 @@
     <header class="site-header">
         <div class="header-inner">
             <a href="index.html" class="logo"><img src="img/logo-autosync-escura.png" alt="AutoSync" class="logo-img"></a>
+            <nav class="main-nav so-mobile" aria-label="Navegação principal">
+                <a href="index.html#veiculo">Meu veículo</a>
+                <a href="index.html#setup">Customização</a>
+                <a href="index.html#manutencao">Manutenção</a>
+                <a href="oficinas.html">Oficinas</a>
+                <a href="buscar-oficinas.html">Buscar oficinas</a>
+                <a href="index.html#pecas">Peças</a>
+                <a href="raio-x.html">Raio-X 3D</a>
+            </nav>
             <div class="header-actions">
                 <a class="secondary-button" href="index.html" style="padding:6px 12px;text-decoration:none">Voltar ao painel</a>
             </div>
@@ -74,5 +83,6 @@ python -m uvicorn api.main:app --host 0.0.0.0 --port 8000</pre>
     <script src="js/vendor/qrcode.js"></script>
     <script src="js/api.js"></script>
     <script src="js/qr.js"></script>
+    <script src="js/menu-mobile.js"></script>
 </body>
 </html>

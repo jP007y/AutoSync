@@ -137,7 +137,7 @@
 .qr-box canvas, .qr-box img, .qr-box svg { width: 100%; height: auto; display: block; }
 .qr-box .qr-legenda { margin-top: 12px; font-weight: 700; font-size: 15px; }
 .qr-box .qr-sub { font-size: 12px; color: #4A4844; word-break: break-all; margin-top: 4px; }
-.qr-opcoes { display: grid; gap: 14px; }
+.qr-opcoes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .qr-opcoes label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 6px; }
 .qr-opcoes select, .qr-opcoes input[type="text"] {
     width: 100%; background: var(--surface-secondary); color: var(--text); border: 1px solid var(--border-light);
@@ -162,17 +162,23 @@
 .workshop-all-link { display: block; margin-top: 14px; text-align: center; text-decoration: none; }
 
 @media (max-width: 900px) {
-    .vehicle-options { grid-template-columns: 1fr; }
-    .qr-grid { grid-template-columns: 1fr; }
+    .vehicle-options { grid-template-columns: minmax(0, 1fr); }
+    .qr-grid { grid-template-columns: minmax(0, 1fr); }
     .perfil-prof { grid-template-columns: 1fr; }
     .param-grid { grid-template-columns: 1fr; }
     .main-nav { display: none; }
 }
 @media (max-width: 800px) {
-    .vehicle-card { grid-template-columns: 1fr !important; }
+    .vehicle-card { grid-template-columns: minmax(0, 1fr) !important; }
     .vehicle-image { height: 190px; }
-    .vehicle-specs { grid-template-columns: repeat(2, max-content) !important; }
+    .vehicle-specs { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     .vehicle-card .secondary-button { grid-column: 1 !important; justify-self: stretch !important; }
+}
+/* Celular: o modal (flex item) não pode crescer além da tela por causa do conteúdo */
+.modal-content { min-width: 0; }
+@media (max-width: 500px) {
+    .modal { padding: 12px; }
+    .modal-content { padding: 20px; }
 }
 @media print {
     body * { visibility: hidden; }
