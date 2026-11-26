@@ -28,13 +28,13 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from typing import Optional, List
 
 from database import init_db, get_db
 from models.vehicle import Vehicle, seed_vehicles
-from models.store import Store, seed_stores
+from models.store import Store, seed_stores, TIPOS_SERVICO
 from models.user import User, TIPOS_VALIDOS
 from models.post import Post
 from models.anuncio import Anuncio, TIPOS_ANUNCIO, seed_anuncios
@@ -135,6 +135,13 @@ class LojaPayload(BaseModel):
     horario: Optional[str] = None
     endereco: Optional[str] = None
     servicos: Optional[dict] = None
+    # Tipos de serviço (chaves de TIPOS_SERVICO). Se o painel não
+    # enviar o campo, os tipos já salvos são mantidos.
+    tiposServico: Optional[List[str]] = None
+    # Posição no mapa (opcional). Se o painel não enviar esses campos,
+    # a posição já salva é mantida.
+    latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    longitude: Optional[float] = Field(default=None, ge=-180, le=180)
 
 
 class PublicacaoPayload(BaseModel):
@@ -307,6 +314,22 @@ def criar_ou_atualizar_loja(
     loja.horario = payload.horario
     loja.endereco = payload.endereco
     loja.servicos = payload.servicos or {}
+
+    if "tiposServico" in payload.model_fields_set:
+        tipos = payload.tiposServico or []
+        invalidos = [t for t in tipos if t not in TIPOS_SERVICO]
+        if invalidos:
+            raise HTTPException(status_code=400, detail="Tipo de serviço inválido: " + ", ".join(invalidos))
+        loja.tipos_servico = list(dict.fromkeys(tipos))  # sem repetidos, na ordem enviada
+
+    # Só mexe na posição se o painel mandou os campos (mesmo que nulos,
+    # para permitir remover o pino). Latitude e longitude andam juntas.
+    enviados = payload.model_fields_set
+    if "latitude" in enviados or "longitude" in enviados:
+        if (payload.latitude is None) != (payload.longitude is None):
+            raise HTTPException(status_code=400, detail="Informe latitude e longitude juntas.")
+        loja.latitude = payload.latitude
+        loja.longitude = payload.longitude
 
     db.commit()
     db.refresh(loja)
@@ -608,6 +631,22 @@ def excluir_anuncio(prestador_id: int, anuncio_id: int, db: Session = Depends(ge
 # É o que torna possível abrir o site pelo celular via QR Code.
 # Precisa ficar por último, depois de todas as rotas da API.
 import os as _os
+
+
+# Sem Cache-Control, o navegador aplica cache heurístico aos arquivos do
+# site e pode juntar HTML novo com CSS/JS antigos (só Ctrl+F5 resolvia).
+# "no-cache" NÃO desliga o cache: obriga o navegador (e o Cloudflare do
+# túnel) a revalidar a cada uso com o ETag/Last-Modified que o StaticFiles
+# já envia — se nada mudou, a resposta é um 304 sem corpo.
+# Só vale para /site/; as rotas da API não são alteradas.
+@app.middleware("http")
+async def _site_sem_cache_heuristico(request, call_next):
+    resposta = await call_next(request)
+    caminho = request.url.path
+    if (caminho == "/site" or caminho.startswith("/site/")) and "cache-control" not in resposta.headers:
+        resposta.headers["Cache-Control"] = "no-cache"
+    return resposta
+
 
 _PASTA_FRONTEND = _os.path.abspath(
     _os.path.join(_os.path.dirname(__file__), "..", "..", "frontend")

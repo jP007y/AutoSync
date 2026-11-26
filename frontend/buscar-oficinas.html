@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Buscar oficinas | AutoSync</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <link rel="stylesheet" href="buscar-oficinas.css">
 </head>
 <body>
@@ -15,6 +17,10 @@
   </header>
 
   <main class="bo-main">
+    <div id="bo-aviso" class="bo-aviso" role="status" hidden>
+      <strong>Dados de exemplo.</strong> O servidor do AutoSync não está disponível, então as oficinas abaixo são fictícias, com posições aproximadas e sem contatos reais.
+    </div>
+
     <section class="bo-filtros" aria-label="Filtros de busca">
       <input id="bo-texto" type="search" placeholder="Buscar por nome, serviço ou bairro...">
 
@@ -26,19 +32,49 @@
           <select id="bo-ordem">
             <option value="nota">Melhor avaliação</option>
             <option value="nome">Nome (A-Z)</option>
+            <option value="distancia" disabled>Distância</option>
+          </select>
+        </label>
+        <label>Raio
+          <select id="bo-raio" disabled title="Use sua localização ou busque uma cidade/bairro para filtrar por raio">
+            <option value="0">Todas</option>
+            <option value="2">Até 2 km</option>
+            <option value="5">Até 5 km</option>
+            <option value="10">Até 10 km</option>
+            <option value="25">Até 25 km</option>
           </select>
         </label>
         <label class="bo-check"><input id="bo-aberto" type="checkbox"> Somente abertas agora</label>
       </div>
 
-      <div id="bo-categorias" class="bo-chips" role="group" aria-label="Categorias"></div>
+      <div id="bo-categorias" class="bo-chips" role="group" aria-label="Tipos de serviço e categorias técnicas"></div>
       <button id="bo-limpar" type="button" class="bo-limpar">Limpar filtros</button>
+    </section>
+
+    <section class="bo-mapa-sec" aria-label="Mapa das oficinas">
+      <div class="bo-local">
+        <button id="bo-minha-loc" type="button" class="bo-botao">Usar minha localização</button>
+        <form id="bo-local-form" class="bo-local-form" role="search">
+          <label for="bo-local-busca" class="bo-sr">Cidade ou bairro</label>
+          <input id="bo-local-busca" type="search" placeholder="Ou digite cidade/bairro (ex.: Tijuca, Rio de Janeiro)" autocomplete="off">
+          <button id="bo-local-ir" type="submit" class="bo-botao bo-botao-sec">Ir</button>
+        </form>
+      </div>
+      <p id="bo-local-status" class="bo-local-status" aria-live="polite"></p>
+      <div id="bo-mapa" class="bo-mapa" role="region" aria-label="Mapa com as oficinas filtradas"></div>
+      <p id="bo-mapa-erro" class="bo-mapa-erro" hidden>O mapa não pôde ser carregado (sem conexão com o servidor de mapas). A lista de oficinas abaixo continua funcionando.</p>
+      <p class="bo-mapa-nota">Sua localização é usada só neste navegador para calcular distâncias e não é enviada nem guardada pelo AutoSync. A busca por cidade/bairro consulta o OpenStreetMap.</p>
     </section>
 
     <p id="bo-contagem" class="bo-contagem" aria-live="polite"></p>
     <section id="bo-resultados" class="bo-grid"></section>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+  <script src="data/oficinas-exemplo.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/buscar-oficinas.js"></script>
 </body>
 </html>

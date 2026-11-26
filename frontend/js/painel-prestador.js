@@ -124,6 +124,7 @@ if (usuario) {
         document.getElementById("especialidadesLoja").value = (loja.especialidades || []).join(", ");
         document.getElementById("horarioLoja").value = loja.horario || "";
         document.getElementById("enderecoLoja").value = loja.endereco || "";
+        if (window.AutoSetupMapaLoja) AutoSetupMapaLoja.definirPosicao(loja.latitude, loja.longitude);
         servicosCache = loja.servicos || {};
 
         const linkPerfil = document.getElementById("linkMeuPerfil");
@@ -132,6 +133,11 @@ if (usuario) {
 
         fotosAtuais = (loja.fotos || []).slice();
         renderizarFotosPreview();
+
+        const tiposSalvos = loja.tiposServico || [];
+        document.querySelectorAll("#tiposServicoContainer input[type=checkbox]").forEach(function (checkbox) {
+            checkbox.checked = tiposSalvos.includes(checkbox.value);
+        });
 
         const categoriasSalvas = loja.categorias || [];
         document.querySelectorAll("#categoriasContainer input[type=checkbox]").forEach(function (checkbox) {
@@ -250,7 +256,16 @@ if (usuario) {
             horario: document.getElementById("horarioLoja").value.trim() || null,
             endereco: document.getElementById("enderecoLoja").value.trim() || null,
             servicos: coletarServicos(categoriasSelecionadas),
+            tiposServico: Array.from(
+                document.querySelectorAll("#tiposServicoContainer input[type=checkbox]:checked")
+            ).map(function (checkbox) { return checkbox.value; }),
         };
+
+        // Posição no mapa: só envia se o minimapa carregou; senão o backend
+        // mantém a posição que já estava salva.
+        if (window.AutoSetupMapaLoja && AutoSetupMapaLoja.ativo()) {
+            Object.assign(dadosLoja, AutoSetupMapaLoja.obterPosicao());
+        }
 
         botaoSalvarLoja.disabled = true;
         lojaMensagem.textContent = "Salvando...";

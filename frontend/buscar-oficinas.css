@@ -37,3 +37,78 @@ body { margin: 0; font-family: system-ui, Arial, sans-serif; background: var(--b
 .bo-contato { display: inline-block; margin-top: 8px; background: var(--brand); color: var(--on-brand); padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background .2s; }
 .bo-contato:hover { background: var(--brand-hover); }
 .bo-vazio { grid-column: 1 / -1; text-align: center; padding: 40px 0; color: var(--text-secondary); }
+
+/* ===== MAPA DE OFICINAS (Leaflet) ===== */
+.bo-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.bo-aviso { background: var(--warning-soft); border: 1px solid var(--warning-line); color: var(--text); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; font-size: .9rem; }
+.bo-aviso strong { color: var(--brand-2); }
+.bo-linha select:disabled, .bo-botao:disabled { opacity: var(--disabled-opacity); cursor: not-allowed; }
+.bo-mapa-sec { margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; }
+.bo-local { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bo-local-form { display: flex; gap: 8px; flex: 1 1 260px; min-width: 0; }
+#bo-local-busca { flex: 1; min-width: 0; min-height: 44px; padding: 10px 12px; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+#bo-local-busca::placeholder { color: var(--text-secondary); }
+.bo-botao { min-height: 44px; padding: 10px 16px; background: var(--brand); color: var(--on-brand); border: 1px solid var(--brand); border-radius: 8px; font-weight: 700; cursor: pointer; transition: background .2s; }
+.bo-botao:hover:not(:disabled) { background: var(--brand-hover); }
+.bo-botao-sec { background: var(--surface-2); color: var(--text); border-color: var(--border); }
+.bo-botao-sec:hover:not(:disabled) { background: var(--surface-2); border-color: var(--brand); color: var(--brand); }
+.bo-botao:focus-visible, .bo-chip:focus-visible, .bo-ver-mapa:focus-visible, .bo-contato:focus-visible, .bo-perfil:focus-visible, #bo-local-busca:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.bo-local-status { min-height: 1.2em; margin: 8px 0; color: var(--text-secondary); font-size: .85rem; }
+.bo-mapa { width: 100%; max-width: 100%; height: clamp(280px, 55vh, 460px); border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); z-index: 0; }
+.bo-mapa-erro { padding: 24px; text-align: center; color: var(--text-secondary); background: var(--surface-2); border-radius: 10px; }
+.bo-mapa-nota { margin: 8px 0 0; color: var(--text-secondary); font-size: .75rem; }
+
+/* Tiles claros do OSM adaptados ao tema escuro (só a camada de tiles; pinos e atribuição não mudam) */
+.bo-mapa .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6); }
+
+/* Controles do Leaflet com tamanho tocável e cores do site */
+.bo-mapa .leaflet-bar a, .bo-mapa .leaflet-bar a:hover { width: 44px; height: 44px; line-height: 44px; font-size: 22px; background: var(--surface); color: var(--text); border-bottom-color: var(--border); }
+.bo-mapa .leaflet-bar a:hover { color: var(--brand); }
+.bo-mapa .leaflet-bar { border: 1px solid var(--border); }
+.bo-mapa .leaflet-control-attribution { background: rgba(27, 28, 31, .85); color: var(--text-secondary); }
+.bo-mapa .leaflet-control-attribution a { color: var(--brand); }
+
+/* Pino da oficina (amarelo da marca) */
+.bo-pino { background: none; border: none; }
+.bo-pino span { display: block; width: 26px; height: 26px; margin: 0 auto; background: var(--brand); border: 3px solid #14120F; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px rgba(0, 0, 0, .5); }
+.leaflet-marker-icon.bo-pino:focus-visible { outline: 3px solid var(--brand-hover); outline-offset: 2px; }
+
+/* Popup escuro */
+.bo-mapa .leaflet-popup-content-wrapper, .bo-mapa .leaflet-popup-tip { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.bo-mapa .leaflet-popup-close-button { width: 32px !important; height: 32px !important; font-size: 22px !important; color: var(--text-secondary) !important; }
+.bo-popup strong { display: block; padding-right: 16px; font-size: 1rem; }
+.bo-popup p { margin: 4px 0; }
+.bo-popup-cats { color: var(--text-secondary); font-size: .8rem; }
+.bo-popup-dist { color: var(--brand); font-weight: 600; }
+.bo-popup-acoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+.bo-popup .bo-contato { margin-top: 0; }
+
+/* Cartões: distância, destaque, ações */
+.bo-card h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.bo-selo-exemplo { background: var(--warning-soft); border: 1px solid var(--warning-line); color: var(--brand-2); font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.bo-distancia { margin: 0 0 8px; color: var(--brand); font-weight: 600; font-size: .85rem; }
+.bo-horario { margin: 4px 0; color: var(--text-secondary); font-size: .8rem; }
+.bo-status.desconhecido { color: var(--text-secondary); font-weight: 600; }
+.bo-card-destaque { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-line); }
+.bo-acoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.bo-acoes .bo-contato { margin-top: 0; }
+.bo-contato { min-height: 40px; border: none; cursor: pointer; font: inherit; font-weight: 600; }
+.bo-contato-off, .bo-contato-off:hover { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); cursor: not-allowed; }
+.bo-perfil { color: var(--brand); font-size: .9rem; padding: 8px 4px; }
+.bo-ver-mapa { min-height: 40px; padding: 8px 12px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; font: inherit; font-size: .9rem; }
+.bo-ver-mapa:hover { border-color: var(--brand); color: var(--brand); }
+
+@media (max-width: 600px) {
+  .bo-main { padding: 12px; }
+  .bo-mapa { height: clamp(260px, 50vh, 380px); }
+  .bo-local > .bo-botao { width: 100%; }
+  .bo-grid { grid-template-columns: 1fr; }
+}
+
+/* Chips em dois grupos: tipos de serviço e categorias técnicas */
+.bo-chips .bo-grupo { width: 100%; }
+.bo-grupo + .bo-grupo { margin-top: 8px; }
+.bo-grupo-titulo { margin: 0 0 6px; color: var(--text-secondary); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.bo-grupo-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.bo-chip { min-height: 36px; }
+.bo-tag-tecnica { background: var(--surface-2); border-color: var(--border); color: var(--text-secondary); }
