@@ -632,6 +632,22 @@ def excluir_anuncio(prestador_id: int, anuncio_id: int, db: Session = Depends(ge
 # Precisa ficar por último, depois de todas as rotas da API.
 import os as _os
 
+
+# Sem Cache-Control, o navegador aplica cache heurístico aos arquivos do
+# site e pode juntar HTML novo com CSS/JS antigos (só Ctrl+F5 resolvia).
+# "no-cache" NÃO desliga o cache: obriga o navegador (e o Cloudflare do
+# túnel) a revalidar a cada uso com o ETag/Last-Modified que o StaticFiles
+# já envia — se nada mudou, a resposta é um 304 sem corpo.
+# Só vale para /site/; as rotas da API não são alteradas.
+@app.middleware("http")
+async def _site_sem_cache_heuristico(request, call_next):
+    resposta = await call_next(request)
+    caminho = request.url.path
+    if (caminho == "/site" or caminho.startswith("/site/")) and "cache-control" not in resposta.headers:
+        resposta.headers["Cache-Control"] = "no-cache"
+    return resposta
+
+
 _PASTA_FRONTEND = _os.path.abspath(
     _os.path.join(_os.path.dirname(__file__), "..", "..", "frontend")
 )
