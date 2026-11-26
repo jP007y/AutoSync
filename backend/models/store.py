@@ -39,6 +39,12 @@ class Store(Base):
     # "motor", "eletrica"
     categorias = Column(JSON, nullable=False)
 
+    # Tipos de serviço que a loja oferece (lista com chaves de
+    # TIPOS_SERVICO, abaixo). É separado de `categorias`, que são as
+    # categorias técnicas usadas na cascata e nas peças. Nulo nas
+    # lojas antigas (antes deste campo existir).
+    tipos_servico = Column(JSON, nullable=True)
+
     emite_csv = Column(Boolean, default=False)  # emite Certificado de Segurança Veicular
     contato = Column(String, nullable=True)     # telefone, site ou @ de rede social
     observacao = Column(String, nullable=True)  # ex: "Credenciada Inmetro"
@@ -78,6 +84,7 @@ class Store(Base):
             "nome": self.nome,
             "regiao": self.regiao,
             "categorias": self.categorias,
+            "tiposServico": self.tipos_servico or [],
             "emiteCSV": self.emite_csv,
             "contato": self.contato,
             "observacao": self.observacao,
@@ -266,6 +273,23 @@ EMAILS_DEMO = {
     "Stance Brasil Custom": "stance@demo.autosync",
 }
 
+# Tipos de serviço aceitos em `tipos_servico` (mesmas chaves dos
+# chips da aba "Buscar oficinas" e das caixas do painel).
+TIPOS_SERVICO = ["tuning", "vistoria", "estetico", "martelinho",
+                 "funilaria", "preventiva", "gas", "pequenos"]
+
+# Tipos de serviço plausíveis para as lojas de demonstração.
+TIPOS_SERVICO_SEED = {
+    "Suspensão Pro RJ": ["tuning", "vistoria", "preventiva"],
+    "Oficina Central SP": ["preventiva", "pequenos", "vistoria", "gas"],
+    "Turbo Exhaust BH": ["tuning", "pequenos"],
+    "Rodas & Cia Curitiba": ["estetico", "pequenos"],
+    "PowerTune Performance": ["tuning", "preventiva"],
+    "FreioMax Centro Automotivo": ["preventiva", "vistoria", "pequenos"],
+    "Escape Sound Lab": ["tuning", "vistoria"],
+    "Stance Brasil Custom": ["tuning", "estetico", "martelinho", "funilaria"],
+}
+
 # Coordenadas APROXIMADAS dos endereços fictícios das lojas de
 # demonstração (ficam separadas de LOJAS_SEED para não mexer no
 # script tools/gerar_imagens.py, que importa aquela lista).
@@ -289,7 +313,7 @@ def seed_stores(db):
     Garante as 8 lojas de demonstração, sem apagar nada:
     - cria as que não existem (por nome);
     - nas já existentes, só PREENCHE campos de perfil que estejam vazios;
-    - latitude/longitude de exemplo só entram quando estão NULL;
+    - latitude/longitude e tipos de serviço de exemplo só entram quando estão NULL;
     - cria publicações apenas para lojas de demonstração que ainda não têm nenhuma;
     - as 4 lojas novas ganham uma conta de prestador de demonstração
       (e-mail em EMAILS_DEMO, senha em SENHA_DEMO) para testar o painel.
@@ -317,6 +341,12 @@ def seed_stores(db):
         coords = COORDENADAS_SEED.get(loja.nome)
         if coords and loja.latitude is None and loja.longitude is None:
             loja.latitude, loja.longitude = coords
+
+        # Tipos de serviço: preenche SÓ quando o campo está vazio (NULL).
+        # Uma lista vazia salva pelo prestador no painel é respeitada.
+        tipos = TIPOS_SERVICO_SEED.get(loja.nome)
+        if tipos and loja.tipos_servico is None:
+            loja.tipos_servico = list(tipos)
 
         email = EMAILS_DEMO.get(loja.nome)
         if email and loja.prestador_id is None:

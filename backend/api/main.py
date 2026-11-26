@@ -34,7 +34,7 @@ from typing import Optional, List
 
 from database import init_db, get_db
 from models.vehicle import Vehicle, seed_vehicles
-from models.store import Store, seed_stores
+from models.store import Store, seed_stores, TIPOS_SERVICO
 from models.user import User, TIPOS_VALIDOS
 from models.post import Post
 from models.anuncio import Anuncio, TIPOS_ANUNCIO, seed_anuncios
@@ -135,6 +135,9 @@ class LojaPayload(BaseModel):
     horario: Optional[str] = None
     endereco: Optional[str] = None
     servicos: Optional[dict] = None
+    # Tipos de serviço (chaves de TIPOS_SERVICO). Se o painel não
+    # enviar o campo, os tipos já salvos são mantidos.
+    tiposServico: Optional[List[str]] = None
     # Posição no mapa (opcional). Se o painel não enviar esses campos,
     # a posição já salva é mantida.
     latitude: Optional[float] = Field(default=None, ge=-90, le=90)
@@ -311,6 +314,13 @@ def criar_ou_atualizar_loja(
     loja.horario = payload.horario
     loja.endereco = payload.endereco
     loja.servicos = payload.servicos or {}
+
+    if "tiposServico" in payload.model_fields_set:
+        tipos = payload.tiposServico or []
+        invalidos = [t for t in tipos if t not in TIPOS_SERVICO]
+        if invalidos:
+            raise HTTPException(status_code=400, detail="Tipo de serviço inválido: " + ", ".join(invalidos))
+        loja.tipos_servico = list(dict.fromkeys(tipos))  # sem repetidos, na ordem enviada
 
     # Só mexe na posição se o painel mandou os campos (mesmo que nulos,
     # para permitir remover o pino). Latitude e longitude andam juntas.
