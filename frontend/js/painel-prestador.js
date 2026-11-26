@@ -134,6 +134,11 @@ if (usuario) {
         fotosAtuais = (loja.fotos || []).slice();
         renderizarFotosPreview();
 
+        const tiposSalvos = loja.tiposServico || [];
+        document.querySelectorAll("#tiposServicoContainer input[type=checkbox]").forEach(function (checkbox) {
+            checkbox.checked = tiposSalvos.includes(checkbox.value);
+        });
+
         const categoriasSalvas = loja.categorias || [];
         document.querySelectorAll("#categoriasContainer input[type=checkbox]").forEach(function (checkbox) {
             checkbox.checked = categoriasSalvas.includes(checkbox.value);
@@ -251,6 +256,9 @@ if (usuario) {
             horario: document.getElementById("horarioLoja").value.trim() || null,
             endereco: document.getElementById("enderecoLoja").value.trim() || null,
             servicos: coletarServicos(categoriasSelecionadas),
+            tiposServico: Array.from(
+                document.querySelectorAll("#tiposServicoContainer input[type=checkbox]:checked")
+            ).map(function (checkbox) { return checkbox.value; }),
         };
 
         // Posição no mapa: só envia se o minimapa carregou; senão o backend

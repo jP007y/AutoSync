@@ -13,6 +13,18 @@ const AutoSyncUtil = (function () {
         eletrica: "Elétrica",
     };
 
+    /** Tipos de serviço da loja (campo tipos_servico; mesmas chaves de TIPOS_SERVICO no backend). */
+    const TIPOS_SERVICO = {
+        tuning: "Tuning",
+        vistoria: "Vistoria",
+        estetico: "Reparos estéticos",
+        martelinho: "Martelinho de ouro",
+        funilaria: "Funilaria e pintura",
+        preventiva: "Manutenção preventiva",
+        gas: "Fiscalização de gás (GNV)",
+        pequenos: "Pequenos reparos",
+    };
+
     /** Escapa texto digitado por usuários antes de colocá-lo em innerHTML. */
     function esc(texto) {
         return String(texto == null ? "" : texto).replace(/[&<>"']/g, function (c) {
@@ -47,7 +59,7 @@ const AutoSyncUtil = (function () {
         return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
     }
 
-    return { CATEGORIAS, esc, categoriaLabel, imgTag, formatarData };
+    return { CATEGORIAS, TIPOS_SERVICO, esc, categoriaLabel, imgTag, formatarData };
 })();
 
 if (typeof window !== "undefined") window.AutoSyncUtil = AutoSyncUtil;
